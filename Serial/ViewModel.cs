@@ -1,0 +1,95 @@
+﻿using Serial.MVVM;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.IO.Ports;
+using System.Linq;
+
+namespace Serial
+{
+    public class ViewModel : NotificationObject
+    {
+        public static ViewModel Instance { get; } = new ViewModel();
+
+
+        public DelegateCommand AddSerialConnectionCmd { get; }
+        public DelegateCommand RemoveSerialConnectionCmd { get; }
+
+
+        public List<string> AvaliablePorts { get; }
+        public List<int> BraudRateList { get; }
+        public List<int> DataBitsList { get; }
+        public List<Parity> ParityList { get; }
+        public List<StopBits> StopBitsList { get; }
+        public ObservableCollection<SerialConnection> SerialConnections { get; }
+
+
+        private SerialConnection selectedSerialConnection;
+        public SerialConnection SelectedSerialConnection
+        {
+            get => selectedSerialConnection;
+            set => UpdateValue(ref selectedSerialConnection, value);
+        }
+
+
+        void SerialConnectionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RemoveSerialConnectionCmd.CanExecute = SerialConnections.Count > 0 && SelectedSerialConnection != null;
+        }
+
+        void AddSerialConnection()
+        {
+            SerialConnection sc = new SerialConnection();
+            SelectedSerialConnection = sc;
+            SerialConnections.Add(sc);
+        }
+
+        void RemoveSerialConnection(SerialConnection sc)
+        {
+            if (sc == null)
+                return;
+
+            bool flag = true;
+            if (sc.IsOpen)
+            {
+                Utility.Ask("该串口已打开，是否要关闭并移除？", result =>
+                {
+                    if (result)
+                        sc.IsOpen = false;
+                    else
+                        flag = false;
+                });
+            }
+
+            if (flag)
+            {
+                int index = SerialConnections.IndexOf(sc);
+                SerialConnections.Remove(sc);
+
+                if (index < SerialConnections.Count)
+                    SelectedSerialConnection = SerialConnections[index];
+                else if (SerialConnections.Count > 0)
+                    SelectedSerialConnection = SerialConnections[Math.Max(0, index - 1)];
+            }
+        }
+
+
+        private ViewModel()
+        {
+            SerialConnections = new ObservableCollection<SerialConnection>();
+            SerialConnections.CollectionChanged += SerialConnectionsCollectionChanged;
+
+            AvaliablePorts = SerialPort.GetPortNames().ToList();
+            BraudRateList = new List<int> { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 43000, 56000, 57600, 115200 };
+            DataBitsList = new List<int> { 5, 6, 7, 8 };
+            ParityList = Utility.GetEnumList<Parity>();
+            StopBitsList = Utility.GetEnumList<StopBits>();
+
+            AddSerialConnectionCmd = new DelegateCommand(AddSerialConnection);
+            RemoveSerialConnectionCmd = new DelegateCommand<SerialConnection>(RemoveSerialConnection, false);
+
+            AddSerialConnection();
+        }
+    }
+}
