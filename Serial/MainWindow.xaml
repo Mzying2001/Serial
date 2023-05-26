@@ -179,57 +179,45 @@
                                                                 <ColumnDefinition Width="*"/>
                                                                 <ColumnDefinition Width="Auto"/>
                                                             </Grid.ColumnDefinitions>
-                                                            <!--收/发图标-->
-                                                            <Border Grid.Column="0" Margin="10,0,0,0"
-                                                                    CornerRadius="5" VerticalAlignment="Center">
-                                                                <Border.Style>
-                                                                    <Style TargetType="Border">
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding IsSentData}" Value="True">
-                                                                                <Setter Property="Background" Value="Gray"/>
-                                                                            </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding IsSentData}" Value="False">
-                                                                                <Setter Property="Background" Value="Green"/>
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </Border.Style>
-                                                                <TextBlock Foreground="White" Margin="4,2" FontSize="10">
-                                                                    <TextBlock.Style>
-                                                                        <Style TargetType="TextBlock">
+                                                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                                <!--收/发图标-->
+                                                                <Border Margin="10,0,0,0" CornerRadius="5" VerticalAlignment="Center">
+                                                                    <Border.Style>
+                                                                        <Style TargetType="Border">
                                                                             <Style.Triggers>
                                                                                 <DataTrigger Binding="{Binding IsSentData}" Value="True">
-                                                                                    <Setter Property="Text" Value="发"/>
+                                                                                    <Setter Property="Background" Value="Gray"/>
                                                                                 </DataTrigger>
                                                                                 <DataTrigger Binding="{Binding IsSentData}" Value="False">
-                                                                                    <Setter Property="Text" Value="收"/>
+                                                                                    <Setter Property="Background" Value="Green"/>
                                                                                 </DataTrigger>
                                                                             </Style.Triggers>
                                                                         </Style>
-                                                                    </TextBlock.Style>
-                                                                </TextBlock>
-                                                            </Border>
-                                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                                    </Border.Style>
+                                                                    <TextBlock Foreground="White" Margin="4,2" FontSize="10">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsSentData}" Value="True">
+                                                                                        <Setter Property="Text" Value="发"/>
+                                                                                    </DataTrigger>
+                                                                                    <DataTrigger Binding="{Binding IsSentData}" Value="False">
+                                                                                        <Setter Property="Text" Value="收"/>
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+                                                                </Border>
                                                                 <!--时间-->
                                                                 <TextBlock Margin="10,0,0,0" FontSize="10" Foreground="Gray"
                                                                            VerticalAlignment="Center" Text="{Binding Time, StringFormat=HH:mm:ss}"/>
-                                                                <!--数据-->
-                                                                <TextBox Padding="10" BorderThickness="0" Background="Transparent" IsReadOnly="True"
-                                                                         FontFamily="Consolas" Text="{Binding Data, Mode=OneWay}">
-                                                                    <TextBox.Style>
-                                                                        <Style TargetType="TextBox">
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding Hex}" Value="True">
-                                                                                    <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                                                </DataTrigger>
-                                                                                <DataTrigger Binding="{Binding Hex}" Value="False">
-                                                                                    <Setter Property="TextWrapping" Value="Wrap"/>
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </TextBox.Style>
-                                                                </TextBox>
                                                             </StackPanel>
+                                                            <!--数据-->
+                                                            <TextBox Grid.Column="1" Margin="10" MaxHeight="150"
+                                                                     BorderThickness="0" Background="Transparent"
+                                                                     HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                                                                     IsReadOnly="True" FontFamily="Consolas" Text="{Binding Data, Mode=OneWay}"/>
                                                             <!--HEX显示-->
                                                             <CheckBox Grid.Column="2" Margin="0,0,10,0"
                                                                       VerticalAlignment="Center" Content="HEX"
