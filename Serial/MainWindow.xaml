@@ -171,6 +171,19 @@
                                                 <i:Interaction.Behaviors>
                                                     <behaviors:ListBoxScrollToBottom/>
                                                 </i:Interaction.Behaviors>
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <Setter Property="ContextMenu">
+                                                            <Setter.Value>
+                                                                <!--数据项的右键菜单-->
+                                                                <ContextMenu>
+                                                                    <MenuItem Header="导出数据" CommandParameter="{Binding}"
+                                                                              Command="{Binding Source={x:Static local:ViewModel.Instance}, Path=ExportSerialDataCmd}"/>
+                                                                </ContextMenu>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
                                                 <ListBox.ItemTemplate>
                                                     <DataTemplate DataType="{x:Type local:SerialData}">
                                                         <Grid>

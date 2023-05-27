@@ -12,6 +12,7 @@ namespace Serial
 
         public DateTime Time { get; private set; }
         public bool IsSentData { get; private set; }
+        public byte[] Bytes { get => data; }
 
         private bool hex;
         public bool Hex

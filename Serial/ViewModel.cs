@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 
@@ -15,6 +16,7 @@ namespace Serial
 
         public DelegateCommand AddSerialConnectionCmd { get; }
         public DelegateCommand RemoveSerialConnectionCmd { get; }
+        public DelegateCommand ExportSerialDataCmd { get; }
 
 
         public List<string> AvaliablePorts { get; }
@@ -33,19 +35,19 @@ namespace Serial
         }
 
 
-        void SerialConnectionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SerialConnectionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             RemoveSerialConnectionCmd.CanExecute = SerialConnections.Count > 0 && SelectedSerialConnection != null;
         }
 
-        void AddSerialConnection()
+        private void AddSerialConnection()
         {
             SerialConnection sc = new SerialConnection();
             SelectedSerialConnection = sc;
             SerialConnections.Add(sc);
         }
 
-        void RemoveSerialConnection(SerialConnection sc)
+        private void RemoveSerialConnection(SerialConnection sc)
         {
             if (sc == null)
                 return;
@@ -74,6 +76,12 @@ namespace Serial
             }
         }
 
+        private void ExportSerialData(SerialData serialData)
+        {
+            var sfd = new Microsoft.Win32.SaveFileDialog() { Filter = "TXT|*.txt|BIN|*.bin" };
+            if (sfd.ShowDialog() == true)
+                File.WriteAllBytes(sfd.FileName, serialData.Bytes);
+        }
 
         private ViewModel()
         {
@@ -88,6 +96,7 @@ namespace Serial
 
             AddSerialConnectionCmd = new DelegateCommand(AddSerialConnection);
             RemoveSerialConnectionCmd = new DelegateCommand<SerialConnection>(RemoveSerialConnection, false);
+            ExportSerialDataCmd = new DelegateCommand<SerialData>(ExportSerialData);
 
             AddSerialConnection();
         }
