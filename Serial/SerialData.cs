@@ -75,10 +75,10 @@ namespace Serial
                     if (i % 16 == 0)
                     {
                         if (i != 0)
-                            sb.Append("\n");
+                            sb.AppendLine();
                     }
                     else
-                        sb.Append(" ");
+                        sb.Append(' ');
                     sb.Append(data[i].ToString("X2"));
                 }
                 hexStr = sb.ToString();
