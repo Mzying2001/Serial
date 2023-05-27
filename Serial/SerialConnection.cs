@@ -50,6 +50,7 @@ namespace Serial
                     if (DataList.Count > 5000)
                         DataList.RemoveAt(0);
                 });
+                ReceivedDataCount++;
             }
             catch (Exception ex)
             {
@@ -71,6 +72,16 @@ namespace Serial
         {
             get => selectedData;
             set => UpdateValue(ref selectedData, value);
+        }
+
+        private ulong receivedDataCount = 0;
+        /// <summary>
+        /// 已接收到的数据数
+        /// </summary>
+        public ulong ReceivedDataCount
+        {
+            get => receivedDataCount;
+            private set => UpdateValue(ref receivedDataCount, value);
         }
 
         private string strToSend = "";

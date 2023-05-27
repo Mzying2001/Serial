@@ -154,6 +154,7 @@
                                                         数据位：<Run Text="{Binding DataBits}"/><LineBreak/>
                                                         校验位：<Run Text="{Binding Parity}"/><LineBreak/>
                                                         停止位：<Run Text="{Binding StopBits}"/><LineBreak/>
+                                                        已接收：<Run Text="{Binding ReceivedDataCount, Mode=OneWay}"/>
                                                     </TextBlock>
                                                 </StackPanel>
                                             </ScrollViewer>
