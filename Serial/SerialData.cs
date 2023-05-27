@@ -10,6 +10,8 @@ namespace Serial
         private string str;
         private string hexStr;
 
+        public DelegateCommand ChangeEncodingCmd { get; }
+
         public Encoding Encoding { get; private set; }
         public DateTime Time { get; private set; }
         public bool IsSentData { get; private set; }
@@ -47,6 +49,7 @@ namespace Serial
         private SerialData()
         {
             Time = DateTime.Now;
+            ChangeEncodingCmd = new DelegateCommand<EncodingInfo>(ChangeEncoding);
         }
 
         public SerialData(byte[] data, Encoding encoding) : this()
@@ -86,6 +89,16 @@ namespace Serial
                 hexStr = sb.ToString();
             }
             return hexStr;
+        }
+
+        private void ChangeEncoding(EncodingInfo encodingInfo)
+        {
+            if (IsSentData)
+                return;
+            Encoding = encodingInfo.GetEncoding();
+            str = null;
+            if (!Hex)
+                RaisePropertyChanged(nameof(Data));
         }
     }
 }

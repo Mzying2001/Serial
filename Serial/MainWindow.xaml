@@ -186,18 +186,9 @@
                                                 </i:Interaction.Behaviors>
                                                 <ListBox.ItemContainerStyle>
                                                     <Style TargetType="ListBoxItem">
-                                                        <Setter Property="ContextMenu">
-                                                            <Setter.Value>
-                                                                <!--数据项的右键菜单-->
-                                                                <ContextMenu>
-                                                                    <MenuItem Header="导出数据" CommandParameter="{Binding}"
-                                                                              Command="{Binding Source={x:Static local:ViewModel.Instance}, Path=ExportSerialDataCmd}"/>
-                                                                </ContextMenu>
-                                                            </Setter.Value>
-                                                        </Setter>
                                                         <Style.Triggers>
-                                                            <!--数据信息-->
                                                             <DataTrigger Binding="{Binding IsSentData}" Value="True">
+                                                                <!--发送出数据的信息-->
                                                                 <Setter Property="ToolTip">
                                                                     <Setter.Value>
                                                                         <TextBlock>
@@ -207,12 +198,31 @@
                                                                 </Setter>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding IsSentData}" Value="False">
+                                                                <!--接收到数据的信息-->
                                                                 <Setter Property="ToolTip">
                                                                     <Setter.Value>
                                                                         <TextBlock>
                                                                             大小：<Run Text="{Binding Bytes.Length, Mode=OneWay}"/> Bytes<LineBreak/>
                                                                             时间：<Run Text="{Binding Time, Mode=OneWay, StringFormat=yyyy/MM/dd HH:mm:ss}"/>
                                                                         </TextBlock>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <!--接收到数据的右键菜单-->
+                                                                <Setter Property="ContextMenu">
+                                                                    <Setter.Value>
+                                                                        <ContextMenu>
+                                                                            <MenuItem Header="导出数据" CommandParameter="{Binding}"
+                                                                                      Command="{Binding Source={x:Static local:ViewModel.Instance}, Path=ExportSerialDataCmd}"/>
+                                                                            <MenuItem Header="更换字符集" DisplayMemberPath="Name"
+                                                                                      ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=EncodingInfoList}">
+                                                                                <MenuItem.ItemContainerStyle>
+                                                                                    <Style TargetType="MenuItem">
+                                                                                        <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource AncestorType=MenuItem}, Path=DataContext.ChangeEncodingCmd}"/>
+                                                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                                                    </Style>
+                                                                                </MenuItem.ItemContainerStyle>
+                                                                            </MenuItem>
+                                                                        </ContextMenu>
                                                                     </Setter.Value>
                                                                 </Setter>
                                                             </DataTrigger>
