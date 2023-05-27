@@ -39,7 +39,7 @@ namespace Serial
             }
             try
             {
-                Thread.Sleep(50); // 防止获取数据不完整
+                Thread.Sleep(10); // 防止获取数据不完整
                 byte[] data = new byte[serialPort.BytesToRead];
                 serialPort.Read(data, 0, data.Length);
                 App.Current?.Dispatcher?.Invoke(() =>
