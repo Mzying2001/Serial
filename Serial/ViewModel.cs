@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Text;
 
 namespace Serial
 {
@@ -20,6 +21,7 @@ namespace Serial
         public DelegateCommand UpdateAvaliablePortsCmd { get; }
 
 
+        public List<EncodingInfo> EncodingInfoList { get; }
         public List<string> AvaliablePorts { get; private set; }
         public List<int> BraudRateList { get; }
         public List<int> DataBitsList { get; }
@@ -43,7 +45,7 @@ namespace Serial
 
         private void AddSerialConnection()
         {
-            SerialConnection sc = new SerialConnection();
+            var sc = new SerialConnection(EncodingInfoList.Where(i => i.GetEncoding() == Encoding.UTF8).FirstOrDefault()); //默认使用utf-8
             SelectedSerialConnection = sc;
             SerialConnections.Add(sc);
         }
@@ -96,6 +98,7 @@ namespace Serial
             SerialConnections = new ObservableCollection<SerialConnection>();
             SerialConnections.CollectionChanged += SerialConnectionsCollectionChanged;
 
+            EncodingInfoList = Encoding.GetEncodings().OrderBy(i => i.Name).ToList();
             AvaliablePorts = SerialPort.GetPortNames().ToList();
             BraudRateList = new List<int> { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 43000, 56000, 57600, 115200 };
             DataBitsList = new List<int> { 5, 6, 7, 8 };

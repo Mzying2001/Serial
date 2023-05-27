@@ -10,6 +10,7 @@ namespace Serial
         private string str;
         private string hexStr;
 
+        public Encoding Encoding { get; private set; }
         public DateTime Time { get; private set; }
         public bool IsSentData { get; private set; }
         public byte[] Bytes { get => data; }
@@ -48,9 +49,10 @@ namespace Serial
             Time = DateTime.Now;
         }
 
-        public SerialData(byte[] data) : this()
+        public SerialData(byte[] data, Encoding encoding) : this()
         {
             this.data = data;
+            Encoding = encoding;
         }
 
         public static SerialData CreateSentData(string description)
@@ -61,7 +63,7 @@ namespace Serial
         private string AsStr()
         {
             if (str == null)
-                str = Encoding.UTF8.GetString(data);
+                str = Encoding.GetString(data);
             return str;
         }
 

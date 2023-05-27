@@ -11,8 +11,10 @@ namespace Serial
     {
         readonly System.IO.Ports.SerialPort serialPort;
 
-        public SerialConnection()
+        public SerialConnection(EncodingInfo encodingInfo)
         {
+            EncodingInfo = encodingInfo;
+
             serialPort = new System.IO.Ports.SerialPort()
             {
                 ReadTimeout = 4000,
@@ -44,7 +46,7 @@ namespace Serial
                 serialPort.Read(data, 0, data.Length);
                 App.Current?.Dispatcher?.Invoke(() =>
                 {
-                    SerialData sd = new SerialData(data) { Hex = showHexByDefault };
+                    SerialData sd = new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault };
                     DataList.Add(sd);
                     SelectedData = sd;
                     if (DataList.Count > 5000)
@@ -63,6 +65,16 @@ namespace Serial
         /// 数据列表
         /// </summary>
         public ObservableCollection<SerialData> DataList { get; }
+
+        private EncodingInfo encodingInfo;
+        /// <summary>
+        /// 字符集信息
+        /// </summary>
+        public EncodingInfo EncodingInfo
+        {
+            get => encodingInfo;
+            set => UpdateValue(ref encodingInfo, value);
+        }
 
         private SerialData selectedData;
         /// <summary>
@@ -246,7 +258,7 @@ namespace Serial
                 return;
             try
             {
-                byte[] data = Encoding.UTF8.GetBytes(StrToSend);
+                byte[] data = EncodingInfo.GetEncoding().GetBytes(StrToSend);
                 serialPort.Write(data, 0, data.Length);
                 DataList.Add(SerialData.CreateSentData(StrToSend));
             }

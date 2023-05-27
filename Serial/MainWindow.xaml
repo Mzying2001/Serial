@@ -146,12 +146,19 @@
                                             </Border.Triggers>
                                             <ScrollViewer VerticalScrollBarVisibility="Hidden">
                                                 <StackPanel Margin="20,15">
+                                                    <!--选项-->
                                                     <TextBlock FontSize="20" Margin="0,0,0,10">选项</TextBlock>
+                                                    <DockPanel Margin="0,0,0,10" LastChildFill="False">
+                                                        <TextBlock DockPanel.Dock="Left" Margin="0,0,5,0" VerticalAlignment="Center">字符集</TextBlock>
+                                                        <ComboBox DockPanel.Dock="Right" DisplayMemberPath="Name" SelectedItem="{Binding EncodingInfo}"
+                                                                  ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=EncodingInfoList}"/>
+                                                    </DockPanel>
+                                                    <Rectangle Margin="0,0,0,10" Height="1" Fill="#15000000"/>
                                                     <CheckBox Margin="0,0,0,10" IsChecked="{Binding PauseReceiving}">暂停接收</CheckBox>
                                                     <CheckBox Margin="0,0,0,10" IsChecked="{Binding ShowHexByDefault}">默认显示十六进制</CheckBox>
                                                     <Button Margin="0,0,0,10" Command="{Binding ClearDataCmd}">清空记录</Button>
                                                     <Button Command="{Binding CloseCmd}" Margin="0,0,0,10">关闭串口</Button>
-
+                                                    <!--串口信息-->
                                                     <TextBlock FontSize="20" Margin="0,10,0,10">串口信息</TextBlock>
                                                     <TextBlock Margin="0,0,0,10">
                                                         串口名：<Run Text="{Binding PortName}"/><LineBreak/>
