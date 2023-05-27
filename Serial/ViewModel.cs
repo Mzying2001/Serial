@@ -17,9 +17,10 @@ namespace Serial
         public DelegateCommand AddSerialConnectionCmd { get; }
         public DelegateCommand RemoveSerialConnectionCmd { get; }
         public DelegateCommand ExportSerialDataCmd { get; }
+        public DelegateCommand UpdateAvaliablePortsCmd { get; }
 
 
-        public List<string> AvaliablePorts { get; }
+        public List<string> AvaliablePorts { get; private set; }
         public List<int> BraudRateList { get; }
         public List<int> DataBitsList { get; }
         public List<Parity> ParityList { get; }
@@ -83,6 +84,13 @@ namespace Serial
                 File.WriteAllBytes(sfd.FileName, serialData.Bytes);
         }
 
+        private void UpdateAvaliablePorts()
+        {
+            AvaliablePorts = SerialPort.GetPortNames().ToList();
+            RaisePropertyChanged(nameof(AvaliablePorts));
+        }
+
+
         private ViewModel()
         {
             SerialConnections = new ObservableCollection<SerialConnection>();
@@ -97,6 +105,7 @@ namespace Serial
             AddSerialConnectionCmd = new DelegateCommand(AddSerialConnection);
             RemoveSerialConnectionCmd = new DelegateCommand<SerialConnection>(RemoveSerialConnection, false);
             ExportSerialDataCmd = new DelegateCommand<SerialData>(ExportSerialData);
+            UpdateAvaliablePortsCmd = new DelegateCommand(UpdateAvaliablePorts);
 
             AddSerialConnection();
         }

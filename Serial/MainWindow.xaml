@@ -79,16 +79,21 @@
                                                 </Style>
                                             </StackPanel.Resources>
                                             <TextBlock>串口名</TextBlock>
-                                            <ComboBox ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=AvaliablePorts}"
-                                                      IsEditable="True">
-                                                <ComboBox.Text>
-                                                    <Binding Path="PortName" UpdateSourceTrigger="PropertyChanged">
-                                                        <Binding.ValidationRules>
-                                                            <rules:PortNameRule/>
-                                                        </Binding.ValidationRules>
-                                                    </Binding>
-                                                </ComboBox.Text>
-                                            </ComboBox>
+                                            <DockPanel>
+                                                <Button DockPanel.Dock="Right" Margin="5,0,0,10" Padding="10,0"
+                                                        Content="R" ToolTip="更新可用串口列表"
+                                                        Command="{Binding Source={x:Static local:ViewModel.Instance}, Path=UpdateAvaliablePortsCmd}"/>
+                                                <ComboBox ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=AvaliablePorts}"
+                                                          IsEditable="True">
+                                                    <ComboBox.Text>
+                                                        <Binding Path="PortName" UpdateSourceTrigger="PropertyChanged">
+                                                            <Binding.ValidationRules>
+                                                                <rules:PortNameRule/>
+                                                            </Binding.ValidationRules>
+                                                        </Binding>
+                                                    </ComboBox.Text>
+                                                </ComboBox>
+                                            </DockPanel>
                                             <TextBlock>波特率</TextBlock>
                                             <ComboBox ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=BraudRateList}"
                                                       IsEditable="True">
