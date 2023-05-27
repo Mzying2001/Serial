@@ -42,8 +42,13 @@ namespace Serial
             try
             {
                 Thread.Sleep(10); // 防止获取数据不完整
+
+                if (!serialPort.IsOpen)
+                    return;
+
                 byte[] data = new byte[serialPort.BytesToRead];
                 serialPort.Read(data, 0, data.Length);
+
                 App.Current?.Dispatcher?.Invoke(() =>
                 {
                     SerialData sd = new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault };
