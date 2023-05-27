@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.Xaml.Behaviors;
+using System.ComponentModel;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
 
 namespace Serial.Behaviors
 {
