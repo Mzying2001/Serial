@@ -182,6 +182,28 @@
                                                                 </ContextMenu>
                                                             </Setter.Value>
                                                         </Setter>
+                                                        <Style.Triggers>
+                                                            <!--数据信息-->
+                                                            <DataTrigger Binding="{Binding IsSentData}" Value="True">
+                                                                <Setter Property="ToolTip">
+                                                                    <Setter.Value>
+                                                                        <TextBlock>
+                                                                            发送时间：<Run Text="{Binding Time, Mode=OneWay, StringFormat=yyyy/MM/dd HH:mm:ss}"/>
+                                                                        </TextBlock>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsSentData}" Value="False">
+                                                                <Setter Property="ToolTip">
+                                                                    <Setter.Value>
+                                                                        <TextBlock>
+                                                                            大小：<Run Text="{Binding Bytes.Length, Mode=OneWay}"/> Bytes<LineBreak/>
+                                                                            时间：<Run Text="{Binding Time, Mode=OneWay, StringFormat=yyyy/MM/dd HH:mm:ss}"/>
+                                                                        </TextBlock>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
                                                     </Style>
                                                 </ListBox.ItemContainerStyle>
                                                 <ListBox.ItemTemplate>
