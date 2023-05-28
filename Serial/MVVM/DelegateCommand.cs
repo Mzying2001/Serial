@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace Serial.MVVM
 {
-    public class DelegateCommand : ICommand
+    public class DelegateCommand : NotificationObject, ICommand
     {
         public event EventHandler CanExecuteChanged;
 
@@ -15,7 +15,7 @@ namespace Serial.MVVM
             get { return _canExecute; }
             set
             {
-                _canExecute = value;
+                UpdateValue(ref _canExecute, value);
                 CanExecuteChanged?.Invoke(this, new EventArgs());
             }
         }
