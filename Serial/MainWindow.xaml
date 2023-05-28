@@ -132,7 +132,7 @@
                                                 <EventTrigger RoutedEvent="MouseEnter">
                                                     <BeginStoryboard>
                                                         <Storyboard>
-                                                            <DoubleAnimation Duration="0:0:0.15" To="160" Storyboard.TargetProperty="Width"/>
+                                                            <DoubleAnimation Duration="0:0:0.15" To="180" Storyboard.TargetProperty="Width"/>
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
@@ -150,8 +150,15 @@
                                                     <TextBlock FontSize="20" Margin="0,0,0,10">选项</TextBlock>
                                                     <DockPanel Margin="0,0,0,10" LastChildFill="False">
                                                         <TextBlock DockPanel.Dock="Left" Margin="0,0,5,0" VerticalAlignment="Center">字符集</TextBlock>
-                                                        <ComboBox DockPanel.Dock="Right" DisplayMemberPath="Name" SelectedItem="{Binding EncodingInfo}"
-                                                                  ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=EncodingInfoList}"/>
+                                                        <ComboBox DockPanel.Dock="Right" SelectedItem="{Binding EncodingInfo}"
+                                                                  ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=EncodingInfoList}"
+                                                                  ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=SelectedItem.DisplayName}">
+                                                            <ComboBox.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis"/>
+                                                                </DataTemplate>
+                                                            </ComboBox.ItemTemplate>
+                                                        </ComboBox>
                                                     </DockPanel>
                                                     <Rectangle Margin="0,0,0,10" Height="1" Fill="#15000000"/>
                                                     <CheckBox Margin="0,0,0,10" IsChecked="{Binding PauseReceiving}">暂停接收</CheckBox>
@@ -213,7 +220,7 @@
                                                                         <ContextMenu>
                                                                             <MenuItem Header="导出数据" CommandParameter="{Binding}"
                                                                                       Command="{Binding Source={x:Static local:ViewModel.Instance}, Path=ExportSerialDataCmd}"/>
-                                                                            <MenuItem Header="更换字符集" DisplayMemberPath="Name"
+                                                                            <MenuItem Header="更换字符集" DisplayMemberPath="DisplayName"
                                                                                       ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=EncodingInfoList}">
                                                                                 <MenuItem.ItemContainerStyle>
                                                                                     <Style TargetType="MenuItem">
