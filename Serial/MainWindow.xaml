@@ -329,6 +329,7 @@
                                                         </Grid.ColumnDefinitions>
                                                         <TextBox Grid.Column="0" AcceptsReturn="True" MaxHeight="100" Padding="0,3"
                                                                  VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto"
+                                                                 IsEnabled="{Binding SendStringCmd.CanExecute}"
                                                                  Text="{Binding StrToSend, UpdateSourceTrigger=PropertyChanged}">
                                                             <TextBox.InputBindings>
                                                                 <!--发送快捷键-->

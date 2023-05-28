@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Serial
 {
@@ -262,20 +263,31 @@ namespace Serial
         /// 发送字符串
         /// </summary>
         public DelegateCommand SendStringCmd { get; }
-        public void SendString()
+        public async void SendString()
         {
             if (string.IsNullOrEmpty(StrToSend))
                 return;
-            try
+
+            SerialData serialData = null;
+            SendStringCmd.CanExecute = false;
+
+            await Task.Run(() =>
             {
-                byte[] data = EncodingInfo.GetEncoding().GetBytes(StrToSend);
-                serialPort.Write(data, 0, data.Length);
-                AddSerialDataToList(SerialData.CreateSentData(StrToSend));
-            }
-            catch (Exception e)
-            {
-                Utility.ShowErrorMsg(e.Message);
-            }
+                try
+                {
+                    byte[] data = EncodingInfo.GetEncoding().GetBytes(StrToSend);
+                    serialPort.Write(data, 0, data.Length);
+                    serialData = SerialData.CreateSentData(StrToSend);
+                }
+                catch (Exception e)
+                {
+                    App.Current.Dispatcher.Invoke(() => Utility.ShowErrorMsg(e.Message));
+                }
+            });
+
+            if (serialData != null)
+                AddSerialDataToList(serialData);
+            SendStringCmd.CanExecute = true;
         }
 
         /// <summary>
@@ -304,20 +316,33 @@ namespace Serial
         /// 发送文件
         /// </summary>
         public DelegateCommand SendFileCmd { get; }
-        public void SendFile()
+        public async void SendFile()
         {
             if (string.IsNullOrEmpty(FileToSend))
                 return;
-            try
+
+            SerialData serialData = null;
+            SendFileCmd.CanExecute = false;
+            SelectFileCmd.CanExecute = false;
+
+            await Task.Run(() =>
             {
-                byte[] data = File.ReadAllBytes(FileToSend);
-                serialPort.Write(data, 0, data.Length);
-                AddSerialDataToList(SerialData.CreateSentData($"[文件] {FileToSend}"));
-            }
-            catch (Exception e)
-            {
-                Utility.ShowErrorMsg(e.ToString());
-            }
+                try
+                {
+                    byte[] data = File.ReadAllBytes(FileToSend);
+                    serialPort.Write(data, 0, data.Length);
+                    serialData = SerialData.CreateSentData($"[文件] {FileToSend}");
+                }
+                catch (Exception e)
+                {
+                    App.Current.Dispatcher.Invoke(() => Utility.ShowErrorMsg(e.Message));
+                }
+            });
+
+            if (serialData != null)
+                AddSerialDataToList(serialData);
+            SendFileCmd.CanExecute = true;
+            SelectFileCmd.CanExecute = true;
         }
 
         /// <summary>
