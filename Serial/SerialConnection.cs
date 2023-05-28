@@ -9,7 +9,7 @@ namespace Serial
 {
     public class SerialConnection : NotificationObject
     {
-        readonly System.IO.Ports.SerialPort serialPort;
+        private readonly System.IO.Ports.SerialPort serialPort;
 
         public SerialConnection(EncodingInfo encodingInfo)
         {
@@ -51,18 +51,22 @@ namespace Serial
 
                 App.Current?.Dispatcher?.Invoke(() =>
                 {
-                    SerialData sd = new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault };
-                    DataList.Add(sd);
-                    SelectedData = sd;
-                    if (DataList.Count > 5000)
-                        DataList.RemoveAt(0);
+                    AddSerialDataToList(new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault });
+                    ReceivedDataCount++;
                 });
-                ReceivedDataCount++;
             }
             catch (Exception ex)
             {
                 Utility.ShowErrorMsg(ex.ToString());
             }
+        }
+
+        private void AddSerialDataToList(SerialData serialData)
+        {
+            DataList.Add(serialData);
+            SelectedData = serialData;
+            if (DataList.Count > 5000)
+                DataList.RemoveAt(0);
         }
 
         #region properties
@@ -265,7 +269,7 @@ namespace Serial
             {
                 byte[] data = EncodingInfo.GetEncoding().GetBytes(StrToSend);
                 serialPort.Write(data, 0, data.Length);
-                DataList.Add(SerialData.CreateSentData(StrToSend));
+                AddSerialDataToList(SerialData.CreateSentData(StrToSend));
             }
             catch (Exception e)
             {
@@ -307,7 +311,7 @@ namespace Serial
             {
                 byte[] data = File.ReadAllBytes(FileToSend);
                 serialPort.Write(data, 0, data.Length);
-                DataList.Add(SerialData.CreateSentData($"[文件] {FileToSend}"));
+                AddSerialDataToList(SerialData.CreateSentData($"[文件] {FileToSend}"));
             }
             catch (Exception e)
             {
