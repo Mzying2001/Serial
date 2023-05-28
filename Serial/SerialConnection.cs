@@ -30,6 +30,7 @@ namespace Serial
             ClearDataCmd = new DelegateCommand(ClearData);
             SelectFileCmd = new DelegateCommand(SelectFile);
             SendFileCmd = new DelegateCommand(SendFile);
+            RemoveDataItemCmd = new DelegateCommand<SerialData>(RemoveDataItem);
         }
 
         private void SerialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -317,6 +318,15 @@ namespace Serial
             {
                 Utility.ShowErrorMsg(e.ToString());
             }
+        }
+
+        /// <summary>
+        /// 删除某条数据
+        /// </summary>
+        public DelegateCommand RemoveDataItemCmd { get; }
+        private void RemoveDataItem(SerialData serialData)
+        {
+            DataList.Remove(serialData);
         }
         #endregion
     }

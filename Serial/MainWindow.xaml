@@ -188,6 +188,9 @@
                                             <ListBox Grid.Row="0" HorizontalContentAlignment="Stretch"
                                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                      ItemsSource="{Binding DataList}" SelectedItem="{Binding SelectedData}">
+                                                <ListBox.Resources>
+                                                    <DiscreteObjectKeyFrame x:Key="ListBoxBindingProxy" Value="{Binding}"/>
+                                                </ListBox.Resources>
                                                 <i:Interaction.Behaviors>
                                                     <behaviors:ListBoxScrollToBottom/>
                                                 </i:Interaction.Behaviors>
@@ -201,6 +204,15 @@
                                                                         <TextBlock>
                                                                             发送时间：<Run Text="{Binding Time, Mode=OneWay, StringFormat=yyyy/MM/dd HH:mm:ss}"/>
                                                                         </TextBlock>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <!--发送出数据的右键菜单-->
+                                                                <Setter Property="ContextMenu">
+                                                                    <Setter.Value>
+                                                                        <ContextMenu>
+                                                                            <MenuItem Header="删除" CommandParameter="{Binding}"
+                                                                                      Command="{Binding Source={StaticResource ListBoxBindingProxy}, Path=Value.RemoveDataItemCmd}"/>
+                                                                        </ContextMenu>
                                                                     </Setter.Value>
                                                                 </Setter>
                                                             </DataTrigger>
@@ -229,6 +241,9 @@
                                                                                     </Style>
                                                                                 </MenuItem.ItemContainerStyle>
                                                                             </MenuItem>
+                                                                            <Separator/>
+                                                                            <MenuItem Header="删除" CommandParameter="{Binding}"
+                                                                                      Command="{Binding Source={StaticResource ListBoxBindingProxy}, Path=Value.RemoveDataItemCmd}"/>
                                                                         </ContextMenu>
                                                                     </Setter.Value>
                                                                 </Setter>
