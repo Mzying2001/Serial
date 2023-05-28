@@ -292,11 +292,11 @@ namespace Serial
         public DelegateCommand SelectFileCmd { get; }
         public void SelectFile()
         {
-            var ofd = new Microsoft.Win32.OpenFileDialog();
-            if (ofd.ShowDialog() == true)
+            Utility.AskOpenFile("", (ok, fileName) =>
             {
-                FileToSend = ofd.FileName;
-            }
+                if (ok)
+                    FileToSend = fileName;
+            });
         }
 
         /// <summary>

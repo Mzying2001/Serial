@@ -81,9 +81,20 @@ namespace Serial
 
         private void ExportSerialData(SerialData serialData)
         {
-            var sfd = new Microsoft.Win32.SaveFileDialog() { Filter = "TXT|*.txt|BIN|*.bin" };
-            if (sfd.ShowDialog() == true)
-                File.WriteAllBytes(sfd.FileName, serialData.Bytes);
+            Utility.AskSaveFile("文本文档|*.txt|所有文件|*.*", (ok, fileName) =>
+            {
+                if (ok)
+                {
+                    try
+                    {
+                        File.WriteAllBytes(fileName, serialData.Bytes);
+                    }
+                    catch (Exception e)
+                    {
+                        Utility.ShowErrorMsg(e.Message);
+                    }
+                }
+            });
         }
 
         private void UpdateAvaliablePorts()
