@@ -109,7 +109,7 @@ namespace Serial
             SerialConnections = new ObservableCollection<SerialConnection>();
             SerialConnections.CollectionChanged += SerialConnectionsCollectionChanged;
 
-            EncodingInfoList = Encoding.GetEncodings().OrderBy(i => i.Name).ToList();
+            EncodingInfoList = Encoding.GetEncodings().OrderBy(i => i.DisplayName).ToList();
             AvaliablePorts = SerialPort.GetPortNames().ToList();
             BraudRateList = new List<int> { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 43000, 56000, 57600, 115200 };
             DataBitsList = new List<int> { 5, 6, 7, 8 };
