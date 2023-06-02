@@ -127,8 +127,8 @@
                                     <!--串口打开时的界面开始-->
                                     <DockPanel>
                                         <!--右侧菜单-->
-                                        <Border DockPanel.Dock="Right" CornerRadius="5" Width="10" Background="#10000000">
-                                            <Border.Triggers>
+                                        <Border DockPanel.Dock="Right" CornerRadius="5" Width="180" Background="#10000000">
+                                            <!--<Border.Triggers>
                                                 <EventTrigger RoutedEvent="MouseEnter">
                                                     <BeginStoryboard>
                                                         <Storyboard>
@@ -143,7 +143,7 @@
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
-                                            </Border.Triggers>
+                                            </Border.Triggers>-->
                                             <ScrollViewer VerticalScrollBarVisibility="Hidden">
                                                 <StackPanel Margin="20,15">
                                                     <!--选项-->
