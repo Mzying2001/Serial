@@ -322,23 +322,84 @@
                                             <TabControl Grid.Row="1" Margin="0,5,0,0">
                                                 <!--发送字符串页面-->
                                                 <TabItem Header="字符串">
-                                                    <Grid Margin="10">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <TextBox Grid.Column="0" AcceptsReturn="True" MaxHeight="100" Padding="0,3"
-                                                                 VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto"
-                                                                 IsEnabled="{Binding SendStringCmd.CanExecute}"
-                                                                 Text="{Binding StrToSend, UpdateSourceTrigger=PropertyChanged}">
-                                                            <TextBox.InputBindings>
-                                                                <!--发送快捷键-->
-                                                                <KeyBinding Gesture="Ctrl+Enter" Command="{Binding SendStringCmd}"/>
-                                                            </TextBox.InputBindings>
-                                                        </TextBox>
-                                                        <Button Grid.Column="1" Margin="10,0,0,0"
-                                                                Command="{Binding SendStringCmd}">发送</Button>
-                                                    </Grid>
+                                                    <Expander Margin="10">
+                                                        <!--Template使其Header能够拉伸填满位置-->
+                                                        <Expander.Template>
+                                                            <ControlTemplate TargetType="Expander">
+                                                                <Grid>
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="Auto"/>
+                                                                        <RowDefinition Height="*"/>
+                                                                    </Grid.RowDefinitions>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <ContentPresenter Grid.Row="0" Grid.Column="1">
+                                                                        <ContentPresenter.Style>
+                                                                            <Style TargetType="ContentPresenter">
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=Expander}}" Value="False">
+                                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </ContentPresenter.Style>
+                                                                    </ContentPresenter>
+                                                                    <ToggleButton Grid.Row="1" Grid.Column="0"
+                                                                                  IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=Expander}}">
+                                                                        <ToggleButton.Template>
+                                                                            <ControlTemplate TargetType="ToggleButton">
+                                                                                <Expander VerticalAlignment="Center" ExpandDirection="Up" Style="{x:Null}"
+                                                                                          IsExpanded="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=ToggleButton}}"/>
+                                                                            </ControlTemplate>
+                                                                        </ToggleButton.Template>
+                                                                    </ToggleButton>
+                                                                    <ContentPresenter Grid.Row="1" Grid.Column="1" Content="{TemplateBinding Header}"/>
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Expander.Template>
+                                                        <Expander.Header>
+                                                            <!--输入框和发送按钮-->
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBox Grid.Column="0" AcceptsReturn="True" MaxHeight="100" Padding="0,3"
+                                                                         VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto"
+                                                                         IsEnabled="{Binding SendStringCmd.CanExecute}"
+                                                                         Text="{Binding StrToSend, UpdateSourceTrigger=PropertyChanged}">
+                                                                    <TextBox.InputBindings>
+                                                                        <!--发送快捷键-->
+                                                                        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding SendStringCmd}"/>
+                                                                    </TextBox.InputBindings>
+                                                                </TextBox>
+                                                                <Button Grid.Column="1" Margin="10,0,0,0"
+                                                                        Content="发送" ToolTip="按Enter键换行，按Ctrl+Enter发送数据"
+                                                                        Command="{Binding SendStringCmd}"/>
+                                                            </Grid>
+                                                        </Expander.Header>
+                                                        <Expander.Content>
+                                                            <!--夹层-->
+                                                            <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+                                                                <StackPanel.Resources>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                    </Style>
+                                                                    <Style TargetType="CheckBox">
+                                                                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                                    </Style>
+                                                                </StackPanel.Resources>
+                                                                <CheckBox Content="解析为HEX" Margin="-0.9,0,0,0"/>
+                                                                <CheckBox Content="循环发送：" Margin="20,0,0,0"/>
+                                                                <TextBox MinWidth="10" MaxWidth="50" BorderThickness="0"
+                                                                         Text="0" ToolTip="循环发送的间隔时间，范围：0-99999ms"
+                                                                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                                                <TextBlock>ms</TextBlock>
+                                                            </StackPanel>
+                                                        </Expander.Content>
+                                                    </Expander>
                                                 </TabItem>
                                                 <!--发送文件页面-->
                                                 <TabItem Header="文件">
