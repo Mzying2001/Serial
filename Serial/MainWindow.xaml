@@ -227,7 +227,7 @@
                                                                 <Setter Property="ToolTip">
                                                                     <Setter.Value>
                                                                         <TextBlock>
-                                                                            大小：<Run Text="{Binding Bytes.Length, Mode=OneWay}"/> Bytes<LineBreak/>
+                                                                            大小：<Run Text="{Binding Bytes.Length, Mode=OneWay}"/> 字节<LineBreak/>
                                                                             时间：<Run Text="{Binding Time, Mode=OneWay, StringFormat=yyyy/MM/dd HH:mm:ss}"/>
                                                                         </TextBlock>
                                                                     </Setter.Value>
