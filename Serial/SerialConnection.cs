@@ -273,7 +273,7 @@ namespace Serial
         /// 发送字符串
         /// </summary>
         public DelegateCommand SendStringCmd { get; }
-        public async void SendString()
+        private async void SendString()
         {
             if (string.IsNullOrEmpty(StrToSend))
                 return;
@@ -304,7 +304,7 @@ namespace Serial
         /// 清除数据
         /// </summary>
         public DelegateCommand ClearDataCmd { get; }
-        public void ClearData()
+        private void ClearData()
         {
             DataList.Clear();
         }
@@ -313,7 +313,7 @@ namespace Serial
         /// 选择要发送的文件
         /// </summary>
         public DelegateCommand SelectFileCmd { get; }
-        public void SelectFile()
+        private void SelectFile()
         {
             Utility.AskOpenFile("", (ok, fileName) =>
             {
@@ -326,7 +326,7 @@ namespace Serial
         /// 发送文件
         /// </summary>
         public DelegateCommand SendFileCmd { get; }
-        public async void SendFile()
+        private async void SendFile()
         {
             if (string.IsNullOrEmpty(FileToSend))
                 return;
