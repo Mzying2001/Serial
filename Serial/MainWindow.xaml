@@ -391,7 +391,7 @@
                                                                         <Setter Property="VerticalContentAlignment" Value="Center"/>
                                                                     </Style>
                                                                 </StackPanel.Resources>
-                                                                <CheckBox Content="解析为HEX" Margin="-0.9,0,0,0"/>
+                                                                <CheckBox Content="解析为HEX" Margin="-0.9,0,0,0" IsChecked="{Binding ParseStrToHex}"/>
                                                                 <CheckBox Content="循环发送：" Margin="20,0,0,0"/>
                                                                 <TextBox MinWidth="10" MaxWidth="50" BorderThickness="0"
                                                                          Text="0" ToolTip="循环发送的间隔时间，范围：0-99999ms"

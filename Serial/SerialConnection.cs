@@ -117,6 +117,16 @@ namespace Serial
             set => UpdateValue(ref strToSend, value);
         }
 
+        private bool parseStrToHex;
+        /// <summary>
+        /// 解析字符串为HEX
+        /// </summary>
+        public bool ParseStrToHex
+        {
+            get => parseStrToHex;
+            set => UpdateValue(ref parseStrToHex, value);
+        }
+
         private string fileToSend = "";
         /// <summary>
         /// 要发送的文件
@@ -275,7 +285,7 @@ namespace Serial
             {
                 try
                 {
-                    byte[] data = EncodingInfo.GetEncoding().GetBytes(StrToSend);
+                    byte[] data = ParseStrToHex ? HexStr.Parse(StrToSend) : EncodingInfo.GetEncoding().GetBytes(StrToSend);
                     serialPort.Write(data, 0, data.Length);
                     serialData = SerialData.CreateSentData(StrToSend);
                 }
