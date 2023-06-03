@@ -173,7 +173,13 @@
                                                         数据位：<Run Text="{Binding DataBits}"/><LineBreak/>
                                                         校验位：<Run Text="{Binding Parity}"/><LineBreak/>
                                                         停止位：<Run Text="{Binding StopBits}"/><LineBreak/>
-                                                        已接收：<Run Text="{Binding ReceivedDataCount, Mode=OneWay}"/>
+                                                        已接收：<Run Text="{Binding ReceivedDataByteCount, Mode=OneWay, StringFormat=\{0\} 字节}">
+                                                            <Run.ToolTip>
+                                                                <TextBlock>
+                                                                    已接收 <Run Text="{Binding ReceivedDataCount, Mode=OneWay}"/> 条数据，共 <Run Text="{Binding ReceivedDataByteCount, Mode=OneWay}"/> 字节
+                                                                </TextBlock>
+                                                            </Run.ToolTip>
+                                                        </Run>
                                                     </TextBlock>
                                                 </StackPanel>
                                             </ScrollViewer>

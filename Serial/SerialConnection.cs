@@ -54,7 +54,7 @@ namespace Serial
                 App.Current?.Dispatcher?.Invoke(() =>
                 {
                     AddSerialDataToList(new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault });
-                    ReceivedDataCount++;
+                    UpdateReceivedCounter(data);
                 });
             }
             catch (Exception ex)
@@ -63,12 +63,26 @@ namespace Serial
             }
         }
 
+        /// <summary>
+        /// 添加串口数据到列表
+        /// </summary>
+        /// <param name="serialData"></param>
         private void AddSerialDataToList(SerialData serialData)
         {
             DataList.Add(serialData);
             SelectedData = serialData;
             if (DataList.Count > 5000)
                 DataList.RemoveAt(0);
+        }
+
+        /// <summary>
+        /// 更新 <see cref="ReceivedDataCount"/> 和 <see cref="ReceivedDataByteCount"/>
+        /// </summary>
+        /// <param name="data">新接收的数据</param>
+        private void UpdateReceivedCounter(byte[] data)
+        {
+            ReceivedDataCount++;
+            ReceivedDataByteCount += (ulong)data.Length;
         }
 
         #region properties
@@ -105,6 +119,16 @@ namespace Serial
         {
             get => receivedDataCount;
             private set => UpdateValue(ref receivedDataCount, value);
+        }
+
+        private ulong receivedDataByteCount = 0;
+        /// <summary>
+        /// 已接收到数据的字节数
+        /// </summary>
+        public ulong ReceivedDataByteCount
+        {
+            get => receivedDataByteCount;
+            private set => UpdateValue(ref receivedDataByteCount, value);
         }
 
         private string strToSend = "";
