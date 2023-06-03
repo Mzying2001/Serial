@@ -127,7 +127,7 @@
                                     <!--串口打开时的界面开始-->
                                     <DockPanel>
                                         <!--右侧菜单-->
-                                        <Border DockPanel.Dock="Right" CornerRadius="5" Width="180" Background="#10000000">
+                                        <Border DockPanel.Dock="Right" CornerRadius="5" Width="170" Background="#10000000">
                                             <!--<Border.Triggers>
                                                 <EventTrigger RoutedEvent="MouseEnter">
                                                     <BeginStoryboard>
