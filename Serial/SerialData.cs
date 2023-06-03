@@ -73,21 +73,7 @@ namespace Serial
         private string AsHex()
         {
             if (hexStr == null)
-            {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < data.Length; i++)
-                {
-                    if (i % 16 == 0)
-                    {
-                        if (i != 0)
-                            sb.AppendLine();
-                    }
-                    else
-                        sb.Append(' ');
-                    sb.Append(data[i].ToString("X2"));
-                }
-                hexStr = sb.ToString();
-            }
+                hexStr = HexStr.Format(data);
             return hexStr;
         }
 

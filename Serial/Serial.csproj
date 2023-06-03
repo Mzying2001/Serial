@@ -208,6 +208,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Behaviors\ListBoxScrollToBottom.cs" />
+    <Compile Include="HexStr.cs" />
     <Compile Include="MVVM\DelegateCommand.cs" />
     <Compile Include="MVVM\DelegateCommandGeneric.cs" />
     <Compile Include="MVVM\NotificationObject.cs" />
