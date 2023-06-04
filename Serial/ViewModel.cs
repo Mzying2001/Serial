@@ -46,6 +46,7 @@ namespace Serial
         private void AddSerialConnection()
         {
             var sc = new SerialConnection(EncodingInfoList.Where(i => i.GetEncoding() == Encoding.UTF8).FirstOrDefault()); //默认使用utf-8
+            sc.SelectedSerialPortInfo = AvaliablePorts.FirstOrDefault();
             SelectedSerialConnection = sc;
             SerialConnections.Add(sc);
         }
