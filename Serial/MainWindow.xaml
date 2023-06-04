@@ -43,10 +43,26 @@
                                 </Style>
                             </Ellipse.Style>
                         </Ellipse>
-                        <TextBlock Text="{Binding PortName}" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding SelectedSerialPortInfo.PortName}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedSerialPortInfo}" Value="{x:Null}">
+                                            <Setter Property="Text" Value="[未选择]"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </StackPanel>
                 </ItemContainerTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="ToolTip" Value="{Binding SelectedSerialPortInfo.Description}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
         </ListBox>
 
         <!--顶部按钮-->
@@ -60,7 +76,7 @@
 
         <!--主要功能区-->
         <GroupBox DataContext="{Binding SelectedSerialConnection}"
-                  Margin="0,0,10,10" Header="{Binding PortName}">
+                  Margin="0,0,10,10" Header="{Binding SelectedSerialPortInfo}">
             <GroupBox.Style>
                 <Style TargetType="GroupBox">
                     <Style.Triggers>
@@ -86,14 +102,13 @@
                                                         Content="R" ToolTip="更新可用串口列表"
                                                         Command="{Binding Source={x:Static local:ViewModel.Instance}, Path=UpdateAvaliablePortsCmd}"/>
                                                 <ComboBox ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=AvaliablePorts}"
-                                                          IsEditable="True">
-                                                    <ComboBox.Text>
-                                                        <Binding Path="PortName" UpdateSourceTrigger="PropertyChanged">
-                                                            <Binding.ValidationRules>
-                                                                <rules:PortNameRule/>
-                                                            </Binding.ValidationRules>
-                                                        </Binding>
-                                                    </ComboBox.Text>
+                                                          SelectedItem="{Binding SelectedSerialPortInfo}"
+                                                          ToolTip="{Binding SelectedItem, RelativeSource={RelativeSource Self}}">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
                                                 </ComboBox>
                                             </DockPanel>
                                             <TextBlock>波特率</TextBlock>

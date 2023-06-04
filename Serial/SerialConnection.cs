@@ -230,6 +230,16 @@ namespace Serial
             set => UpdateValue(ref showHexByDefault, value);
         }
 
+        private SerialPortInfo selectedSerialPortInfo;
+        /// <summary>
+        /// 所选串口的信息
+        /// </summary>
+        public SerialPortInfo SelectedSerialPortInfo
+        {
+            get => selectedSerialPortInfo;
+            set => UpdateValue(ref selectedSerialPortInfo, value);
+        }
+
         /// <summary>
         /// 串口名
         /// </summary>
@@ -307,6 +317,7 @@ namespace Serial
                 {
                     if (value)
                     {
+                        PortName = SelectedSerialPortInfo?.PortName;
                         serialPort.Open();
                     }
                     else

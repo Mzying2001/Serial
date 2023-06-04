@@ -22,7 +22,7 @@ namespace Serial
 
 
         public List<EncodingInfo> EncodingInfoList { get; }
-        public List<string> AvaliablePorts { get; private set; }
+        public List<SerialPortInfo> AvaliablePorts { get; private set; }
         public List<int> BraudRateList { get; }
         public List<int> DataBitsList { get; }
         public List<Parity> ParityList { get; }
@@ -99,7 +99,7 @@ namespace Serial
 
         private void UpdateAvaliablePorts()
         {
-            AvaliablePorts = SerialPort.GetPortNames().ToList();
+            AvaliablePorts = SerialPort.GetPortNames().Select(i => new SerialPortInfo(i)).ToList();
             RaisePropertyChanged(nameof(AvaliablePorts));
         }
 
@@ -110,7 +110,6 @@ namespace Serial
             SerialConnections.CollectionChanged += SerialConnectionsCollectionChanged;
 
             EncodingInfoList = Encoding.GetEncodings().OrderBy(i => i.DisplayName).ToList();
-            AvaliablePorts = SerialPort.GetPortNames().ToList();
             BraudRateList = new List<int> { 110   , 300   , 600   , 1200  , 2400  , 4800   , 9600   , 14400  ,
                                             19200 , 38400 , 57600 , 115200, 128000, 230400 , 256000 , 460800 ,
                                             500000, 512000, 600000, 750000, 921600, 1000000, 1500000, 2000000, };
@@ -123,6 +122,7 @@ namespace Serial
             ExportSerialDataCmd = new DelegateCommand<SerialData>(ExportSerialData);
             UpdateAvaliablePortsCmd = new DelegateCommand(UpdateAvaliablePorts);
 
+            UpdateAvaliablePorts();
             AddSerialConnection();
         }
     }
