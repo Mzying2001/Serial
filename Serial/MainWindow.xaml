@@ -76,10 +76,14 @@
 
         <!--主要功能区-->
         <GroupBox DataContext="{Binding SelectedSerialConnection}"
-                  Margin="0,0,10,10" Header="{Binding SelectedSerialPortInfo}">
+                  Margin="0,0,10,10">
             <GroupBox.Style>
                 <Style TargetType="GroupBox">
+                    <Setter Property="Header" Value="{Binding SelectedSerialPortInfo}"/>
                     <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedSerialPortInfo}" Value="{x:Null}">
+                            <Setter Property="Header" Value=" "/>
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsOpen}" Value="False">
                             <Setter Property="Content">
                                 <Setter.Value>
