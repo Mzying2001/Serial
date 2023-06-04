@@ -339,6 +339,8 @@ namespace Serial
         public DelegateCommand CloseCmd { get; }
         private void Close()
         {
+            if (LoopSending)
+                StopLoopSend();
             IsOpen = false;
         }
 
