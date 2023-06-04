@@ -75,15 +75,13 @@
         </StackPanel>
 
         <!--主要功能区-->
-        <GroupBox DataContext="{Binding SelectedSerialConnection}"
-                  Margin="0,0,10,10">
+        <GroupBox Margin="0,0,10,10" DataContext="{Binding SelectedSerialConnection}">
+            <GroupBox.Header>
+                <TextBlock Text="{Binding SelectedSerialPortInfo}" TextTrimming="CharacterEllipsis"/>
+            </GroupBox.Header>
             <GroupBox.Style>
                 <Style TargetType="GroupBox">
-                    <Setter Property="Header" Value="{Binding SelectedSerialPortInfo}"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedSerialPortInfo}" Value="{x:Null}">
-                            <Setter Property="Header" Value=" "/>
-                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsOpen}" Value="False">
                             <Setter Property="Content">
                                 <Setter.Value>
