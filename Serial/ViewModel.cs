@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Serial
 {
@@ -98,10 +99,12 @@ namespace Serial
             });
         }
 
-        private void UpdateAvaliablePorts()
+        private async void UpdateAvaliablePorts()
         {
-            AvaliablePorts = SerialPort.GetPortNames().Select(i => new SerialPortInfo(i)).ToList();
+            UpdateAvaliablePortsCmd.CanExecute = false;
+            AvaliablePorts = await Task.Run(() => SerialPortInfo.GetSerialPortInfoList());
             RaisePropertyChanged(nameof(AvaliablePorts));
+            UpdateAvaliablePortsCmd.CanExecute = true;
         }
 
 
@@ -110,6 +113,7 @@ namespace Serial
             SerialConnections = new ObservableCollection<SerialConnection>();
             SerialConnections.CollectionChanged += SerialConnectionsCollectionChanged;
 
+            AvaliablePorts = SerialPortInfo.GetSerialPortInfoList();
             EncodingInfoList = Encoding.GetEncodings().OrderBy(i => i.DisplayName).ToList();
             BraudRateList = new List<int> { 110   , 300   , 600   , 1200  , 2400  , 4800   , 9600   , 14400  ,
                                             19200 , 38400 , 57600 , 115200, 128000, 230400 , 256000 , 460800 ,
@@ -123,7 +127,6 @@ namespace Serial
             ExportSerialDataCmd = new DelegateCommand<SerialData>(ExportSerialData);
             UpdateAvaliablePortsCmd = new DelegateCommand(UpdateAvaliablePorts);
 
-            UpdateAvaliablePorts();
             AddSerialConnection();
         }
     }

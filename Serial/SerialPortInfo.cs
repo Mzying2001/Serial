@@ -1,4 +1,5 @@
-﻿using System.Management;
+﻿using System.Collections.Generic;
+using System.Management;
 
 namespace Serial
 {
@@ -7,10 +8,8 @@ namespace Serial
         public string PortName { get; set; }
         public string Description { get; set; }
 
-        public SerialPortInfo(string portName)
+        public SerialPortInfo()
         {
-            PortName = portName;
-            Description = GetSerialPortDescription(portName) ?? "";
         }
 
         public override string ToString()
@@ -19,23 +18,25 @@ namespace Serial
                                                      : $"{PortName} ({Description})";
         }
 
-        public string GetSerialPortDescription(string portName)
+        public static List<SerialPortInfo> GetSerialPortInfoList()
         {
-            string description = null;
+            List<SerialPortInfo> list = new List<SerialPortInfo>();
             try
             {
-                // 查询串口设备
-                using (var searcher = new ManagementObjectSearcher($"SELECT * FROM Win32_SerialPort WHERE DeviceID='{portName}'"))
+                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_SerialPort"))
                 {
                     foreach (ManagementObject obj in searcher.Get())
                     {
-                        description = obj["Description"].ToString();
-                        break; // 只获取第一个匹配项
+                        list.Add(new SerialPortInfo()
+                        {
+                            PortName = obj["DeviceID"].ToString(),
+                            Description = obj["Description"].ToString()
+                        });
                     }
                 }
             }
             catch { }
-            return description;
+            return list;
         }
     }
 }
