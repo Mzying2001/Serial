@@ -10,7 +10,15 @@ namespace Serial
 {
     public class SerialConnection : NotificationObject
     {
+        /// <summary>
+        /// 串口
+        /// </summary>
         private readonly System.IO.Ports.SerialPort serialPort;
+
+        /// <summary>
+        /// 用于中断循环发送
+        /// </summary>
+        private CancellationTokenSource loopSendingCTS;
 
         public SerialConnection(EncodingInfo encodingInfo)
         {
@@ -32,6 +40,8 @@ namespace Serial
             SelectFileCmd = new DelegateCommand(SelectFile);
             SendFileCmd = new DelegateCommand(SendFile);
             RemoveDataItemCmd = new DelegateCommand<SerialData>(RemoveDataItem);
+            StartLoopSendCmd = new DelegateCommand(StartLoopSend);
+            StopLoopSendCmd = new DelegateCommand(StopLoopSend);
         }
 
         private void SerialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -85,11 +95,50 @@ namespace Serial
             ReceivedDataByteCount += (ulong)data.Length;
         }
 
+        /// <summary>
+        /// 将 <see cref="StrToSend"/> 转换为 <see cref="byte[]"/>
+        /// </summary>
+        /// <returns></returns>
+        private byte[] ConvertStrToSend()
+        {
+            return ParseStrToHex ? HexStr.Parse(StrToSend) : EncodingInfo.GetEncoding().GetBytes(StrToSend);
+        }
+
         #region properties
         /// <summary>
         /// 数据列表
         /// </summary>
         public ObservableCollection<SerialData> DataList { get; }
+
+        private bool loopSending;
+        /// <summary>
+        /// 是否正在循环发送
+        /// </summary>
+        public bool LoopSending
+        {
+            get => loopSending;
+            private set => UpdateValue(ref loopSending, value);
+        }
+
+        private bool loopSendingMode;
+        /// <summary>
+        /// 循环发送模式
+        /// </summary>
+        public bool LoopSendingMode
+        {
+            get => loopSendingMode;
+            set => UpdateValue(ref loopSendingMode, value);
+        }
+
+        private int loopSendingInterval = 1000;
+        /// <summary>
+        /// 循环发送的间隔时间
+        /// </summary>
+        public int LoopSendingInterval
+        {
+            get => loopSendingInterval;
+            set => UpdateValue(ref loopSendingInterval, value);
+        }
 
         private EncodingInfo encodingInfo;
         /// <summary>
@@ -309,7 +358,7 @@ namespace Serial
             {
                 try
                 {
-                    byte[] data = ParseStrToHex ? HexStr.Parse(StrToSend) : EncodingInfo.GetEncoding().GetBytes(StrToSend);
+                    byte[] data = ConvertStrToSend();
                     serialPort.Write(data, 0, data.Length);
                     serialData = SerialData.CreateSentData(StrToSend);
                 }
@@ -321,6 +370,7 @@ namespace Serial
 
             if (serialData != null)
                 AddSerialDataToList(serialData);
+
             SendStringCmd.CanExecute = true;
         }
 
@@ -375,6 +425,7 @@ namespace Serial
 
             if (serialData != null)
                 AddSerialDataToList(serialData);
+
             SendFileCmd.CanExecute = true;
             SelectFileCmd.CanExecute = true;
         }
@@ -386,6 +437,73 @@ namespace Serial
         private void RemoveDataItem(SerialData serialData)
         {
             DataList.Remove(serialData);
+        }
+
+        /// <summary>
+        /// 开始循环发送
+        /// </summary>
+        public DelegateCommand StartLoopSendCmd { get; }
+        private async void StartLoopSend()
+        {
+            if (string.IsNullOrEmpty(StrToSend))
+                return;
+
+            byte[] data;
+            try
+            {
+                data = ConvertStrToSend();
+            }
+            catch (Exception e)
+            {
+                Utility.ShowErrorMsg(e.Message);
+                return;
+            }
+
+            LoopSending = true;
+            StartLoopSendCmd.CanExecute = false;
+            SendStringCmd.CanExecute = false;
+
+            loopSendingCTS = new CancellationTokenSource();
+            CancellationToken cancellationToken = loopSendingCTS.Token;
+            LoopSendingInterval = Math.Max(1, Math.Min(LoopSendingInterval, (int)1e5));
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                try
+                {
+                    serialPort.Write(data, 0, data.Length);
+                    AddSerialDataToList(SerialData.CreateSentData(StrToSend));
+                    await Task.Delay(LoopSendingInterval, cancellationToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
+                catch (Exception e)
+                {
+                    Utility.ShowErrorMsg(e.Message);
+                    break;
+                }
+            }
+
+            LoopSending = false;
+            StartLoopSendCmd.CanExecute = true;
+            SendStringCmd.CanExecute = true;
+        }
+
+        /// <summary>
+        /// 停止循环发送
+        /// </summary>
+        public DelegateCommand StopLoopSendCmd { get; }
+        private async void StopLoopSend()
+        {
+            if (loopSendingCTS == null || loopSendingCTS.IsCancellationRequested)
+                return;
+            StopLoopSendCmd.CanExecute = false;
+            loopSendingCTS.Cancel();
+            while (LoopSending)
+                await Task.Delay(10);
+            StopLoopSendCmd.CanExecute = true;
         }
         #endregion
     }

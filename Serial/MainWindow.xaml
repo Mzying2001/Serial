@@ -14,8 +14,10 @@
         DataContext="{x:Static local:ViewModel.Instance}">
 
     <Window.Resources>
-        <Style TargetType="Button">
+        <Style x:Key="MainWindowDefaultButtonStyle" TargetType="Button">
             <Setter Property="Padding" Value="20,5"/>
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource MainWindowDefaultButtonStyle}">
         </Style>
     </Window.Resources>
 
@@ -381,9 +383,27 @@
                                                                         <KeyBinding Gesture="Ctrl+Enter" Command="{Binding SendStringCmd}"/>
                                                                     </TextBox.InputBindings>
                                                                 </TextBox>
-                                                                <Button Grid.Column="1" Margin="10,0,0,0"
-                                                                        Content="发送" ToolTip="按Enter键换行，按Ctrl+Enter发送数据"
-                                                                        Command="{Binding SendStringCmd}"/>
+                                                                <Button Grid.Column="1" Margin="10,0,0,0">
+                                                                    <Button.Style>
+                                                                        <Style TargetType="Button" BasedOn="{StaticResource MainWindowDefaultButtonStyle}">
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding LoopSendingMode}" Value="False">
+                                                                                    <Setter Property="Content" Value="发送"/>
+                                                                                    <Setter Property="Command" Value="{Binding SendStringCmd}"/>
+                                                                                    <Setter Property="ToolTip" Value="按Enter键换行，按Ctrl+Enter发送数据"/>
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding LoopSendingMode}" Value="True">
+                                                                                    <Setter Property="Content" Value="开始"/>
+                                                                                    <Setter Property="Command" Value="{Binding StartLoopSendCmd}"/>
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding LoopSending}" Value="True">
+                                                                                    <Setter Property="Content" Value="结束"/>
+                                                                                    <Setter Property="Command" Value="{Binding StopLoopSendCmd}"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Button.Style>
+                                                                </Button>
                                                             </Grid>
                                                         </Expander.Header>
                                                         <Expander.Content>
@@ -397,10 +417,21 @@
                                                                         <Setter Property="VerticalContentAlignment" Value="Center"/>
                                                                     </Style>
                                                                 </StackPanel.Resources>
+                                                                <StackPanel.Style>
+                                                                    <Style TargetType="StackPanel">
+                                                                        <Style.Triggers>
+                                                                            <!--循环发送时禁止-->
+                                                                            <DataTrigger Binding="{Binding LoopSending}" Value="True">
+                                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </StackPanel.Style>
                                                                 <CheckBox Content="解析为HEX" Margin="-0.9,0,0,0" IsChecked="{Binding ParseStrToHex}"/>
-                                                                <CheckBox Content="循环发送：" Margin="20,0,0,0"/>
+                                                                <CheckBox Content="循环发送：" Margin="20,0,0,0" IsChecked="{Binding LoopSendingMode}"/>
                                                                 <TextBox MinWidth="10" MaxWidth="50" BorderThickness="0"
-                                                                         Text="0" ToolTip="循环发送的间隔时间，范围：0-99999ms"
+                                                                         ToolTip="循环发送的间隔时间，范围：1-100000ms"
+                                                                         Text="{Binding LoopSendingInterval, UpdateSourceTrigger=PropertyChanged}"
                                                                          HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                                                 <TextBlock>ms</TextBlock>
                                                             </StackPanel>
