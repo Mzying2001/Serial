@@ -111,7 +111,9 @@ namespace Serial
 
             EncodingInfoList = Encoding.GetEncodings().OrderBy(i => i.DisplayName).ToList();
             AvaliablePorts = SerialPort.GetPortNames().ToList();
-            BraudRateList = new List<int> { 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 43000, 56000, 57600, 115200 };
+            BraudRateList = new List<int> { 110   , 300   , 600   , 1200  , 2400  , 4800   , 9600   , 14400  ,
+                                            19200 , 38400 , 57600 , 115200, 128000, 230400 , 256000 , 460800 ,
+                                            500000, 512000, 600000, 750000, 921600, 1000000, 1500000, 2000000, };
             DataBitsList = new List<int> { 5, 6, 7, 8 };
             ParityList = Utility.GetEnumList<Parity>();
             StopBitsList = Utility.GetEnumList<StopBits>();
