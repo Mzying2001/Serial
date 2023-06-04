@@ -330,7 +330,7 @@
                                             <TabControl Grid.Row="1" Margin="0,5,0,0">
                                                 <!--发送字符串页面-->
                                                 <TabItem Header="字符串">
-                                                    <Expander Margin="10">
+                                                    <Expander Margin="10" IsExpanded="True">
                                                         <!--Template使其Header能够拉伸填满位置-->
                                                         <Expander.Template>
                                                             <ControlTemplate TargetType="Expander">
