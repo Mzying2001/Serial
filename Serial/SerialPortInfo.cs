@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Management;
 using System.Text.RegularExpressions;
 
 namespace Serial
 {
-    public class SerialPortInfo
+    public class SerialPortInfo : IComparable<SerialPortInfo>
     {
         public string PortName { get; set; }
         public string Description { get; set; }
@@ -16,6 +17,14 @@ namespace Serial
         public override string ToString()
         {
             return $"{PortName} {Description}";
+        }
+
+        public int CompareTo(SerialPortInfo other)
+        {
+            if (PortName.Length == other.PortName.Length)
+                return PortName.CompareTo(other.PortName);
+            else
+                return PortName.Length - other.PortName.Length;
         }
 
         public static List<SerialPortInfo> GetSerialPortInfoList()
@@ -36,8 +45,13 @@ namespace Serial
                     });
                 }
             }
+            list.Sort();
             return list;
         }
+
+        // Regular expression for PortName
+        private static readonly Regex portNameRegex =
+            new Regex(@"COM\d+", RegexOptions.IgnoreCase);
 
         // Helper method to extract port name from device name
         private static string ExtractPortName(string deviceName)
@@ -51,9 +65,9 @@ namespace Serial
                 int portNameLength = endIndex - startIndex - 1;
                 string portName = deviceName.Substring(startIndex + 1, portNameLength);
 
-                foreach (var item in Regex.Matches(portName, @"COM\d+"))
+                foreach (Match match in portNameRegex.Matches(portName))
                 {
-                    portName = item.ToString();
+                    portName = match.Value;
                     return portName;
                 }
             }
