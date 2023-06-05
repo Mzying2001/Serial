@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Management;
+using System.Text.RegularExpressions;
 
 namespace Serial
 {
@@ -21,22 +22,45 @@ namespace Serial
         public static List<SerialPortInfo> GetSerialPortInfoList()
         {
             List<SerialPortInfo> list = new List<SerialPortInfo>();
-            try
+            using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%(COM%)'"))
             {
-                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_SerialPort"))
+                foreach (ManagementObject obj in searcher.Get())
                 {
-                    foreach (ManagementObject obj in searcher.Get())
+                    string deviceName = obj["Name"].ToString();
+                    string portName = ExtractPortName(deviceName);
+                    string description = obj["Description"].ToString();
+
+                    list.Add(new SerialPortInfo()
                     {
-                        list.Add(new SerialPortInfo()
-                        {
-                            PortName = obj["DeviceID"].ToString(),
-                            Description = obj["Description"].ToString()
-                        });
-                    }
+                        PortName = portName,
+                        Description = description
+                    });
                 }
             }
-            catch { }
             return list;
+        }
+
+        // Helper method to extract port name from device name
+        private static string ExtractPortName(string deviceName)
+        {
+            // Assuming the format is "<SomeText> (<PortName>)"
+            int startIndex = deviceName.LastIndexOf('(');
+            int endIndex = deviceName.LastIndexOf(')');
+
+            if (startIndex != -1 && endIndex != -1 && startIndex < endIndex)
+            {
+                int portNameLength = endIndex - startIndex - 1;
+                string portName = deviceName.Substring(startIndex + 1, portNameLength);
+
+                foreach (var item in Regex.Matches(portName, @"COM\d+"))
+                {
+                    portName = item.ToString();
+                    return portName;
+                }
+            }
+
+            // If the expected format is not found, return the entire device name
+            return deviceName;
         }
     }
 }
