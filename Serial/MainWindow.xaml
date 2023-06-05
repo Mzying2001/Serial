@@ -414,7 +414,7 @@
                                                                                     <Setter Property="Command" Value="{Binding StartLoopSendCmd}"/>
                                                                                 </DataTrigger>
                                                                                 <DataTrigger Binding="{Binding LoopSending}" Value="True">
-                                                                                    <Setter Property="Content" Value="结束"/>
+                                                                                    <Setter Property="Content" Value="停止"/>
                                                                                     <Setter Property="Command" Value="{Binding StopLoopSendCmd}"/>
                                                                                 </DataTrigger>
                                                                             </Style.Triggers>
