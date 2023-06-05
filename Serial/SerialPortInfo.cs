@@ -15,8 +15,7 @@ namespace Serial
 
         public override string ToString()
         {
-            return string.IsNullOrEmpty(Description) ? PortName
-                                                     : $"{PortName} ({Description})";
+            return $"{PortName} {Description}";
         }
 
         public static List<SerialPortInfo> GetSerialPortInfoList()
