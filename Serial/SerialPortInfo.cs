@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Management;
 using System.Text.RegularExpressions;
 
 namespace Serial
 {
-    public class SerialPortInfo
+    public class SerialPortInfo : IComparable<SerialPortInfo>
     {
         public string PortName { get; set; }
         public string Description { get; set; }
@@ -17,6 +18,14 @@ namespace Serial
         {
             return string.IsNullOrEmpty(Description) ? PortName
                                                      : $"{PortName} ({Description})";
+        }
+
+        public int CompareTo(SerialPortInfo other)
+        {
+            if (PortName.Length == other.PortName.Length)
+                return PortName.CompareTo(other.PortName);
+            else
+                return PortName.Length - other.PortName.Length;
         }
 
         public static List<SerialPortInfo> GetSerialPortInfoList()
@@ -37,6 +46,7 @@ namespace Serial
                     });
                 }
             }
+            list.Sort();
             return list;
         }
 
