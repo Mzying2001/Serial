@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Management;
+using System.Text.RegularExpressions;
 
 namespace Serial
 {
@@ -39,6 +40,7 @@ namespace Serial
             return list;
         }
 
+        // Helper method to extract port name from device name
         private static string ExtractPortName(string deviceName)
         {
             // Assuming the format is "<SomeText> (<PortName>)"
@@ -49,7 +51,12 @@ namespace Serial
             {
                 int portNameLength = endIndex - startIndex - 1;
                 string portName = deviceName.Substring(startIndex + 1, portNameLength);
-                return portName;
+
+                foreach (var item in Regex.Matches(portName, @"COM\d+"))
+                {
+                    portName = item.ToString();
+                    return portName;
+                }
             }
 
             // If the expected format is not found, return the entire device name
