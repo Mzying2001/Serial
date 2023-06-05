@@ -40,6 +40,10 @@ namespace Serial
             return list;
         }
 
+        // Regular expression for PortName
+        private static readonly Regex portNameRegex =
+            new Regex(@"COM\d+", RegexOptions.IgnoreCase);
+
         // Helper method to extract port name from device name
         private static string ExtractPortName(string deviceName)
         {
@@ -52,9 +56,9 @@ namespace Serial
                 int portNameLength = endIndex - startIndex - 1;
                 string portName = deviceName.Substring(startIndex + 1, portNameLength);
 
-                foreach (var item in Regex.Matches(portName, @"COM\d+"))
+                foreach (Match match in portNameRegex.Matches(portName))
                 {
-                    portName = item.ToString();
+                    portName = match.Value;
                     return portName;
                 }
             }
