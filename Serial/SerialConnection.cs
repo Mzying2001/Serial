@@ -24,11 +24,7 @@ namespace Serial
         {
             EncodingInfo = encodingInfo;
 
-            serialPort = new System.IO.Ports.SerialPort()
-            {
-                ReadTimeout = 4000,
-                WriteTimeout = 4000
-            };
+            serialPort = new System.IO.Ports.SerialPort() { ReadTimeout = 4000, WriteTimeout = 4000 };
             serialPort.DataReceived += SerialPort_DataReceived;
 
             DataList = new ObservableCollection<SerialData>();
@@ -61,7 +57,7 @@ namespace Serial
                 byte[] data = new byte[serialPort.BytesToRead];
                 serialPort.Read(data, 0, data.Length);
 
-                App.Current?.Dispatcher?.Invoke(() =>
+                ExecuteOnUIThread(() =>
                 {
                     AddSerialDataToList(new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault });
                     UpdateReceivedCounter(data);
@@ -69,7 +65,7 @@ namespace Serial
             }
             catch (Exception ex)
             {
-                Utility.ShowErrorMsg(ex.ToString());
+                Utility.ShowErrorMsg(ex.Message);
             }
         }
 
@@ -377,7 +373,7 @@ namespace Serial
                 }
                 catch (Exception e)
                 {
-                    App.Current.Dispatcher.Invoke(() => Utility.ShowErrorMsg(e.Message));
+                    ExecuteOnUIThread(() => Utility.ShowErrorMsg(e.Message));
                 }
             });
 
@@ -432,7 +428,7 @@ namespace Serial
                 }
                 catch (Exception e)
                 {
-                    App.Current.Dispatcher.Invoke(() => Utility.ShowErrorMsg(e.Message));
+                    ExecuteOnUIThread(() => Utility.ShowErrorMsg(e.Message));
                 }
             });
 
