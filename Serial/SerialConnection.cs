@@ -360,25 +360,18 @@ namespace Serial
             if (string.IsNullOrEmpty(StrToSend))
                 return;
 
-            SerialData serialData = null;
             SendStringCmd.CanExecute = false;
 
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    byte[] data = ConvertStrToSend();
-                    serialPort.Write(data, 0, data.Length);
-                    serialData = SerialData.CreateSentData(StrToSend);
-                }
-                catch (Exception e)
-                {
-                    ExecuteOnUIThread(() => Utility.ShowErrorMsg(e.Message));
-                }
-            });
-
-            if (serialData != null)
-                AddSerialDataToList(serialData);
+                byte[] data = ConvertStrToSend();
+                await serialPort.BaseStream.WriteAsync(data, 0, data.Length);
+                AddSerialDataToList(SerialData.CreateSentData(StrToSend));
+            }
+            catch (Exception e)
+            {
+                Utility.ShowErrorMsg(e.Message);
+            }
 
             SendStringCmd.CanExecute = true;
         }
@@ -414,26 +407,19 @@ namespace Serial
             if (string.IsNullOrEmpty(FileToSend))
                 return;
 
-            SerialData serialData = null;
             SendFileCmd.CanExecute = false;
             SelectFileCmd.CanExecute = false;
 
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    byte[] data = File.ReadAllBytes(FileToSend);
-                    serialPort.Write(data, 0, data.Length);
-                    serialData = SerialData.CreateSentData($"[文件] {FileToSend}");
-                }
-                catch (Exception e)
-                {
-                    ExecuteOnUIThread(() => Utility.ShowErrorMsg(e.Message));
-                }
-            });
-
-            if (serialData != null)
-                AddSerialDataToList(serialData);
+                byte[] data = await Task.Run(() => File.ReadAllBytes(FileToSend));
+                await serialPort.BaseStream.WriteAsync(data, 0, data.Length);
+                AddSerialDataToList(SerialData.CreateSentData($"[文件] {FileToSend}"));
+            }
+            catch (Exception e)
+            {
+                Utility.ShowErrorMsg(e.Message);
+            }
 
             SendFileCmd.CanExecute = true;
             SelectFileCmd.CanExecute = true;
@@ -480,7 +466,7 @@ namespace Serial
             {
                 try
                 {
-                    serialPort.Write(data, 0, data.Length);
+                    await serialPort.BaseStream.WriteAsync(data, 0, data.Length);
                     AddSerialDataToList(SerialData.CreateSentData(StrToSend));
                     await Task.Delay(LoopSendingInterval, cancellationToken);
                 }
