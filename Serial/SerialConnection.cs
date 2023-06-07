@@ -31,13 +31,13 @@ namespace Serial
 
             OpenCmd = new DelegateCommand(Open);
             CloseCmd = new DelegateCommand(Close);
-            SendStringCmd = new DelegateCommand(SendString);
+            SendStringCmd = new AsyncDelegateCommand(SendString);
             ClearDataCmd = new DelegateCommand(ClearData);
             SelectFileCmd = new DelegateCommand(SelectFile);
-            SendFileCmd = new DelegateCommand(SendFile);
+            SendFileCmd = new AsyncDelegateCommand(SendFile);
             RemoveDataItemCmd = new DelegateCommand<SerialData>(RemoveDataItem);
-            StartLoopSendCmd = new DelegateCommand(StartLoopSend);
-            StopLoopSendCmd = new DelegateCommand(StopLoopSend);
+            StartLoopSendCmd = new AsyncDelegateCommand(StartLoopSend);
+            StopLoopSendCmd = new AsyncDelegateCommand(StopLoopSend);
         }
 
         private void SerialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -347,7 +347,7 @@ namespace Serial
         private void Close()
         {
             if (LoopSending)
-                StopLoopSend();
+                StopLoopSend().Wait();
             IsOpen = false;
         }
 
@@ -355,7 +355,7 @@ namespace Serial
         /// 发送字符串
         /// </summary>
         public DelegateCommand SendStringCmd { get; }
-        private async void SendString()
+        private async Task SendString()
         {
             if (string.IsNullOrEmpty(StrToSend))
                 return;
@@ -409,7 +409,7 @@ namespace Serial
         /// 发送文件
         /// </summary>
         public DelegateCommand SendFileCmd { get; }
-        private async void SendFile()
+        private async Task SendFile()
         {
             if (string.IsNullOrEmpty(FileToSend))
                 return;
@@ -452,7 +452,7 @@ namespace Serial
         /// 开始循环发送
         /// </summary>
         public DelegateCommand StartLoopSendCmd { get; }
-        private async void StartLoopSend()
+        private async Task StartLoopSend()
         {
             if (string.IsNullOrEmpty(StrToSend))
                 return;
@@ -504,7 +504,7 @@ namespace Serial
         /// 停止循环发送
         /// </summary>
         public DelegateCommand StopLoopSendCmd { get; }
-        private async void StopLoopSend()
+        private async Task StopLoopSend()
         {
             if (loopSendingCTS == null || loopSendingCTS.IsCancellationRequested)
                 return;
