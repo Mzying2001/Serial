@@ -48,7 +48,6 @@ namespace Serial
             CloseCmd = new DelegateCommand(Close);
             SendStringCmd = new AsyncDelegateCommand(SendString);
             ClearDataCmd = new DelegateCommand(ClearData);
-            SelectFileCmd = new DelegateCommand(SelectFile);
             SendFileCmd = new AsyncDelegateCommand(SendFile);
             RemoveDataItemCmd = new DelegateCommand<SerialData>(RemoveDataItem);
             StartLoopSendCmd = new AsyncDelegateCommand(StartLoopSend);
@@ -416,19 +415,6 @@ namespace Serial
         }
 
         /// <summary>
-        /// 选择要发送的文件
-        /// </summary>
-        public DelegateCommand SelectFileCmd { get; }
-        private void SelectFile()
-        {
-            Utility.AskOpenFile("", (ok, fileName) =>
-            {
-                if (ok)
-                    FileToSend = fileName;
-            });
-        }
-
-        /// <summary>
         /// 发送文件
         /// </summary>
         public DelegateCommand SendFileCmd { get; }
@@ -438,7 +424,6 @@ namespace Serial
                 return;
 
             SendFileCmd.CanExecute = false;
-            SelectFileCmd.CanExecute = false;
 
             try
             {
@@ -452,7 +437,6 @@ namespace Serial
             }
 
             SendFileCmd.CanExecute = true;
-            SelectFileCmd.CanExecute = true;
         }
 
         /// <summary>

@@ -461,7 +461,9 @@
                                                         <Button DockPanel.Dock="Right"
                                                                 Command="{Binding SendFileCmd}">发送</Button>
                                                         <Button DockPanel.Dock="Right" Margin="0,0,10,0"
-                                                                Command="{Binding SelectFileCmd}">选择文件</Button>
+                                                                IsEnabled="{Binding SendFileCmd.CanExecute}"
+                                                                CommandParameter="{Binding}"
+                                                                Command="{Binding SelectFileToSendCmd, Source={x:Static local:ViewModel.Instance}}">选择文件</Button>
                                                         <TextBox IsReadOnly="True" VerticalContentAlignment="Center"
                                                                  Margin="0,0,10,0" Text="{Binding FileToSend}"/>
                                                     </DockPanel>

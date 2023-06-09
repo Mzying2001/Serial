@@ -20,6 +20,7 @@ namespace Serial
         public DelegateCommand RemoveSerialConnectionCmd { get; }
         public DelegateCommand ExportSerialDataCmd { get; }
         public DelegateCommand UpdateAvaliablePortsCmd { get; }
+        public DelegateCommand SelectFileToSendCmd { get; }
 
 
         public List<EncodingInfo> EncodingInfoList { get; }
@@ -107,6 +108,15 @@ namespace Serial
             });
         }
 
+        private void SelectFileToSend(SerialConnection serialConnection)
+        {
+            Utility.AskOpenFile("", (ok, fileName) =>
+            {
+                if (ok)
+                    serialConnection.FileToSend = fileName;
+            });
+        }
+
         private async void UpdateAvaliablePorts()
         {
             UpdateAvaliablePortsCmd.CanExecute = false;
@@ -134,6 +144,7 @@ namespace Serial
             RemoveSerialConnectionCmd = new DelegateCommand<SerialConnection>(RemoveSerialConnection, false);
             ExportSerialDataCmd = new DelegateCommand<SerialData>(ExportSerialData);
             UpdateAvaliablePortsCmd = new DelegateCommand(UpdateAvaliablePorts);
+            SelectFileToSendCmd = new DelegateCommand<SerialConnection>(SelectFileToSend);
 
             AddSerialConnection();
         }
