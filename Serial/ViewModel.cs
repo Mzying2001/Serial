@@ -48,8 +48,16 @@ namespace Serial
         {
             var sc = new SerialConnection(EncodingInfoList.Where(i => i.GetEncoding() == Encoding.UTF8).FirstOrDefault()); //默认使用utf-8
             sc.SelectedSerialPortInfo = AvaliablePorts.FirstOrDefault();
+            sc.OnReceivedDataError += SerialErrorHandler;
+            sc.OnSendingDataError += SerialErrorHandler;
+            sc.OnSwitchingIsOpenError += SerialErrorHandler;
             SelectedSerialConnection = sc;
             SerialConnections.Add(sc);
+        }
+
+        private void SerialErrorHandler(object sender, ErrorEventArgs e)
+        {
+            Utility.ShowErrorMsg(e.GetException().Message);
         }
 
         private void RemoveSerialConnection(SerialConnection sc)

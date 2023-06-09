@@ -20,6 +20,21 @@ namespace Serial
         /// </summary>
         private CancellationTokenSource loopSendingCTS;
 
+        /// <summary>
+        /// 接收数据发生错误时触发该事件
+        /// </summary>
+        public event ErrorEventHandler OnReceivedDataError;
+
+        /// <summary>
+        /// 发送数据发送错误时触发该事件
+        /// </summary>
+        public event ErrorEventHandler OnSendingDataError;
+
+        /// <summary>
+        /// 打开或关闭串口失败是触发该事件
+        /// </summary>
+        public event ErrorEventHandler OnSwitchingIsOpenError;
+
         public SerialConnection(EncodingInfo encodingInfo)
         {
             EncodingInfo = encodingInfo;
@@ -65,7 +80,22 @@ namespace Serial
             }
             catch (Exception ex)
             {
-                Utility.ShowErrorMsg(ex.Message);
+                ProcessError(ex, OnReceivedDataError);
+            }
+        }
+
+        /// <summary>
+        /// 调用错误处理函数，若无处理函数则抛出错误
+        /// </summary>
+        private void ProcessError(Exception e, ErrorEventHandler handler)
+        {
+            if (handler == null)
+            {
+                throw e;
+            }
+            else
+            {
+                handler(this, new ErrorEventArgs(e));
             }
         }
 
@@ -323,7 +353,7 @@ namespace Serial
                 }
                 catch (Exception e)
                 {
-                    Utility.ShowErrorMsg(e.Message);
+                    ProcessError(e, OnSwitchingIsOpenError);
                 }
                 RaisePropertyChanged();
             }
@@ -370,7 +400,7 @@ namespace Serial
             }
             catch (Exception e)
             {
-                Utility.ShowErrorMsg(e.Message);
+                ProcessError(e, OnSendingDataError);
             }
 
             SendStringCmd.CanExecute = true;
@@ -418,7 +448,7 @@ namespace Serial
             }
             catch (Exception e)
             {
-                Utility.ShowErrorMsg(e.Message);
+                ProcessError(e, OnSendingDataError);
             }
 
             SendFileCmd.CanExecute = true;
@@ -450,7 +480,7 @@ namespace Serial
             }
             catch (Exception e)
             {
-                Utility.ShowErrorMsg(e.Message);
+                ProcessError(e, OnSendingDataError);
                 return;
             }
 
@@ -476,7 +506,7 @@ namespace Serial
                 }
                 catch (Exception e)
                 {
-                    Utility.ShowErrorMsg(e.Message);
+                    ProcessError(e, OnSendingDataError);
                     break;
                 }
             }
