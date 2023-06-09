@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial", "Serial\Serial.csproj", "{68438998-6D17-4565-A740-15962957ECC5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial.MVVM", "Serial.MVVM\Serial.MVVM.csproj", "{068CDA9F-44D3-484A-BA34-6C9B30BD2C7B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial.Core", "Serial.Core\Serial.Core.csproj", "{F34E6815-9B5B-4673-A941-6318D55D26FF}"
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{68438998-6D17-4565-A740-15962957ECC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68438998-6D17-4565-A740-15962957ECC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68438998-6D17-4565-A740-15962957ECC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68438998-6D17-4565-A740-15962957ECC5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{068CDA9F-44D3-484A-BA34-6C9B30BD2C7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{068CDA9F-44D3-484A-BA34-6C9B30BD2C7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{068CDA9F-44D3-484A-BA34-6C9B30BD2C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
