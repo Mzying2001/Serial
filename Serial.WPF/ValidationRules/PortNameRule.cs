@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
 using System.Windows.Controls;
 
-namespace Serial.ValidationRules
+namespace Serial.WPF.ValidationRules
 {
-    class PortNameRule : RuleBase<string>
+    public class PortNameRule : RuleBase<string>
     {
         public override ValidationResult Validate(string value, CultureInfo cultureInfo)
         {

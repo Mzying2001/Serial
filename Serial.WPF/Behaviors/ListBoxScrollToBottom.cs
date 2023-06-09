@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Controls;
 
-namespace Serial.Behaviors
+namespace Serial.WPF.Behaviors
 {
     public class ListBoxScrollToBottom : Behavior<ListBox>
     {

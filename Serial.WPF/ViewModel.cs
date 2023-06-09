@@ -1,4 +1,5 @@
-﻿using Serial.MVVM;
+﻿using Serial.Core;
+using Serial.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Serial
+namespace Serial.WPF
 {
     public class ViewModel : NotificationObject
     {
@@ -90,7 +91,7 @@ namespace Serial
             }
         }
 
-        private void ExportSerialData(SerialData serialData)
+        private void ExportSerialData(Core.SerialData serialData)
         {
             Utility.AskSaveFile("文本文档|*.txt|所有文件|*.*", (ok, fileName) =>
             {
@@ -142,7 +143,7 @@ namespace Serial
 
             AddSerialConnectionCmd = new DelegateCommand(AddSerialConnection);
             RemoveSerialConnectionCmd = new DelegateCommand<SerialConnection>(RemoveSerialConnection, false);
-            ExportSerialDataCmd = new DelegateCommand<SerialData>(ExportSerialData);
+            ExportSerialDataCmd = new DelegateCommand<Core.SerialData>(ExportSerialData);
             UpdateAvaliablePortsCmd = new DelegateCommand(UpdateAvaliablePorts);
             SelectFileToSendCmd = new DelegateCommand<SerialConnection>(SelectFileToSend);
 

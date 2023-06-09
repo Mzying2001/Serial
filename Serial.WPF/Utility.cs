@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 
-namespace Serial
+namespace Serial.WPF
 {
     public static class Utility
     {

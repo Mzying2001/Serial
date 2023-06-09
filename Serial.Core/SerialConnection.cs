@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Serial
+namespace Serial.Core
 {
     public class SerialConnection : NotificationObject
     {

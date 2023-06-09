@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Serial
+namespace Serial.Core
 {
     public static class HexStr
     {

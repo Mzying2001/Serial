@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial", "Serial\Serial.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial.MVVM", "Serial.MVVM\Serial.MVVM.csproj", "{068CDA9F-44D3-484A-BA34-6C9B30BD2C7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial.Core", "Serial.Core\Serial.Core.csproj", "{F34E6815-9B5B-4673-A941-6318D55D26FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial.WPF", "Serial.WPF\Serial.WPF.csproj", "{D63AB746-AE13-4846-9270-1E4140C8377F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{068CDA9F-44D3-484A-BA34-6C9B30BD2C7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{068CDA9F-44D3-484A-BA34-6C9B30BD2C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{068CDA9F-44D3-484A-BA34-6C9B30BD2C7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F34E6815-9B5B-4673-A941-6318D55D26FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F34E6815-9B5B-4673-A941-6318D55D26FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F34E6815-9B5B-4673-A941-6318D55D26FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F34E6815-9B5B-4673-A941-6318D55D26FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D63AB746-AE13-4846-9270-1E4140C8377F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D63AB746-AE13-4846-9270-1E4140C8377F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D63AB746-AE13-4846-9270-1E4140C8377F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D63AB746-AE13-4846-9270-1E4140C8377F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
