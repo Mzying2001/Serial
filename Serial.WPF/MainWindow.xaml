@@ -12,7 +12,7 @@
         Title="串口助手" Height="450" Width="800"
         MinHeight="400" MinWidth="600"
         WindowStartupLocation="CenterScreen"
-        DataContext="{x:Static local:ViewModel.Instance}">
+        DataContext="{x:Static local:MainViewModel.Instance}">
 
     <Window.Resources>
         <Style x:Key="MainWindowDefaultButtonStyle" TargetType="Button">
@@ -103,8 +103,8 @@
                                             <DockPanel>
                                                 <Button DockPanel.Dock="Right" Margin="5,0,0,10" Padding="10,0"
                                                         Content="R" ToolTip="更新可用串口列表"
-                                                        Command="{Binding Source={x:Static local:ViewModel.Instance}, Path=UpdateAvaliablePortsCmd}"/>
-                                                <ComboBox ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=AvaliablePorts}"
+                                                        Command="{Binding Source={x:Static local:MainViewModel.Instance}, Path=UpdateAvaliablePortsCmd}"/>
+                                                <ComboBox ItemsSource="{Binding Source={x:Static local:MainViewModel.Instance}, Path=AvaliablePorts}"
                                                           SelectedItem="{Binding SelectedSerialPortInfo}"
                                                           ToolTip="{Binding SelectedItem, RelativeSource={RelativeSource Self}}">
                                                     <ComboBox.ItemTemplate>
@@ -115,7 +115,7 @@
                                                 </ComboBox>
                                             </DockPanel>
                                             <TextBlock>波特率</TextBlock>
-                                            <ComboBox ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=BraudRateList}"
+                                            <ComboBox ItemsSource="{Binding Source={x:Static local:MainViewModel.Instance}, Path=BraudRateList}"
                                                       IsEditable="True">
                                                 <ComboBox.Text>
                                                     <Binding Path="BraudRate" UpdateSourceTrigger="PropertyChanged">
@@ -126,13 +126,13 @@
                                                 </ComboBox.Text>
                                             </ComboBox>
                                             <TextBlock>数据位</TextBlock>
-                                            <ComboBox ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=DataBitsList}"
+                                            <ComboBox ItemsSource="{Binding Source={x:Static local:MainViewModel.Instance}, Path=DataBitsList}"
                                                       SelectedItem="{Binding DataBits, UpdateSourceTrigger=PropertyChanged}"/>
                                             <TextBlock>校验位</TextBlock>
-                                            <ComboBox ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=ParityList}"
+                                            <ComboBox ItemsSource="{Binding Source={x:Static local:MainViewModel.Instance}, Path=ParityList}"
                                                       SelectedItem="{Binding Parity, UpdateSourceTrigger=PropertyChanged}"/>
                                             <TextBlock>停止位</TextBlock>
-                                            <ComboBox ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=StopBitsList}"
+                                            <ComboBox ItemsSource="{Binding Source={x:Static local:MainViewModel.Instance}, Path=StopBitsList}"
                                                       SelectedItem="{Binding StopBits, UpdateSourceTrigger=PropertyChanged}"/>
                                             <Button Command="{Binding OpenCmd}" Margin="0,10,0,0">打开</Button>
                                         </StackPanel>
@@ -171,7 +171,7 @@
                                                     <DockPanel Margin="0,0,0,10" LastChildFill="False">
                                                         <TextBlock DockPanel.Dock="Left" Margin="0,0,5,0" VerticalAlignment="Center">字符集</TextBlock>
                                                         <ComboBox DockPanel.Dock="Right" SelectedItem="{Binding EncodingInfo}"
-                                                                  ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=EncodingInfoList}"
+                                                                  ItemsSource="{Binding Source={x:Static local:MainViewModel.Instance}, Path=EncodingInfoList}"
                                                                   ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=SelectedItem.DisplayName}">
                                                             <ComboBox.ItemTemplate>
                                                                 <DataTemplate>
@@ -257,9 +257,9 @@
                                                                     <Setter.Value>
                                                                         <ContextMenu>
                                                                             <MenuItem Header="导出数据" CommandParameter="{Binding}"
-                                                                                      Command="{Binding Source={x:Static local:ViewModel.Instance}, Path=ExportSerialDataCmd}"/>
+                                                                                      Command="{Binding Source={x:Static local:MainViewModel.Instance}, Path=ExportSerialDataCmd}"/>
                                                                             <MenuItem Header="更换字符集" DisplayMemberPath="DisplayName"
-                                                                                      ItemsSource="{Binding Source={x:Static local:ViewModel.Instance}, Path=EncodingInfoList}">
+                                                                                      ItemsSource="{Binding Source={x:Static local:MainViewModel.Instance}, Path=EncodingInfoList}">
                                                                                 <MenuItem.ItemContainerStyle>
                                                                                     <Style TargetType="MenuItem">
                                                                                         <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource AncestorType=MenuItem}, Path=DataContext.ChangeEncodingCmd}"/>
@@ -464,7 +464,7 @@
                                                         <Button DockPanel.Dock="Right" Margin="0,0,10,0"
                                                                 IsEnabled="{Binding SendFileCmd.CanExecute}"
                                                                 CommandParameter="{Binding}"
-                                                                Command="{Binding SelectFileToSendCmd, Source={x:Static local:ViewModel.Instance}}">选择文件</Button>
+                                                                Command="{Binding SelectFileToSendCmd, Source={x:Static local:MainViewModel.Instance}}">选择文件</Button>
                                                         <TextBox IsReadOnly="True" VerticalContentAlignment="Center"
                                                                  Margin="0,0,10,0" Text="{Binding FileToSend}"/>
                                                     </DockPanel>

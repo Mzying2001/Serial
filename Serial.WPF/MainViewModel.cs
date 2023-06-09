@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Serial.WPF
 {
-    public class ViewModel : NotificationObject
+    public class MainViewModel : NotificationObject
     {
-        public static ViewModel Instance { get; } = new ViewModel();
+        public static MainViewModel Instance { get; } = new MainViewModel();
 
 
         public DelegateCommand AddSerialConnectionCmd { get; }
@@ -59,7 +59,7 @@ namespace Serial.WPF
 
         private void SerialErrorHandler(object sender, ErrorEventArgs e)
         {
-            Utility.ShowErrorMsg(e.GetException().Message);
+            SimpleDialogs.ShowErrorMsg(e.GetException().Message);
         }
 
         private void RemoveSerialConnection(SerialConnection sc)
@@ -70,7 +70,7 @@ namespace Serial.WPF
             bool flag = true;
             if (sc.IsOpen)
             {
-                Utility.Ask("该串口已打开，是否要关闭并移除？", result =>
+                SimpleDialogs.Ask("该串口已打开，是否要关闭并移除？", result =>
                 {
                     if (result)
                         sc.IsOpen = false;
@@ -93,7 +93,7 @@ namespace Serial.WPF
 
         private void ExportSerialData(Core.SerialData serialData)
         {
-            Utility.AskSaveFile("文本文档|*.txt|所有文件|*.*", (ok, fileName) =>
+            SimpleDialogs.AskSaveFile("文本文档|*.txt|所有文件|*.*", (ok, fileName) =>
             {
                 if (ok)
                 {
@@ -103,7 +103,7 @@ namespace Serial.WPF
                     }
                     catch (Exception e)
                     {
-                        Utility.ShowErrorMsg(e.Message);
+                        SimpleDialogs.ShowErrorMsg(e.Message);
                     }
                 }
             });
@@ -111,7 +111,7 @@ namespace Serial.WPF
 
         private void SelectFileToSend(SerialConnection serialConnection)
         {
-            Utility.AskOpenFile("", (ok, fileName) =>
+            SimpleDialogs.AskOpenFile("", (ok, fileName) =>
             {
                 if (ok)
                     serialConnection.FileToSend = fileName;
@@ -127,7 +127,7 @@ namespace Serial.WPF
         }
 
 
-        private ViewModel()
+        private MainViewModel()
         {
             SerialConnections = new ObservableCollection<SerialConnection>();
             SerialConnections.CollectionChanged += SerialConnectionsCollectionChanged;
@@ -138,8 +138,8 @@ namespace Serial.WPF
                                             19200 , 38400 , 57600 , 115200, 128000, 230400 , 256000 , 460800 ,
                                             500000, 512000, 600000, 750000, 921600, 1000000, 1500000, 2000000, };
             DataBitsList = new List<int> { 5, 6, 7, 8 };
-            ParityList = Utility.GetEnumList<Parity>();
-            StopBitsList = Utility.GetEnumList<StopBits>();
+            ParityList = Enum.GetValues<Parity>().ToList();
+            StopBitsList = Enum.GetValues<StopBits>().ToList();
 
             AddSerialConnectionCmd = new DelegateCommand(AddSerialConnection);
             RemoveSerialConnectionCmd = new DelegateCommand<SerialConnection>(RemoveSerialConnection, false);
