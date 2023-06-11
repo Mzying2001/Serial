@@ -37,15 +37,14 @@ namespace Serial.Core
 
         public SerialConnection(EncodingInfo encodingInfo)
         {
-            EncodingInfo = encodingInfo;
-
             serialPort = new System.IO.Ports.SerialPort() { ReadTimeout = 4000, WriteTimeout = 4000 };
             serialPort.DataReceived += SerialPort_DataReceived;
 
+            EncodingInfo = encodingInfo;
             DataList = new ObservableCollection<SerialData>();
 
             OpenCmd = new DelegateCommand(Open);
-            CloseCmd = new DelegateCommand(Close);
+            CloseCmd = new AsyncDelegateCommand(Close);
             SendStringCmd = new AsyncDelegateCommand(SendString);
             ClearDataCmd = new DelegateCommand(ClearData);
             SendFileCmd = new AsyncDelegateCommand(SendFile);
@@ -376,11 +375,13 @@ namespace Serial.Core
         /// 关闭串口
         /// </summary>
         public DelegateCommand CloseCmd { get; }
-        private void Close()
+        private async Task Close()
         {
+            CloseCmd.CanExecute = false;
             if (LoopSending)
-                StopLoopSend().Wait();
+                await StopLoopSend();
             IsOpen = false;
+            CloseCmd.CanExecute = true;
         }
 
         /// <summary>
