@@ -73,7 +73,7 @@ namespace Serial.WPF
                 SimpleDialogs.Ask("该串口已打开，是否要关闭并移除？", result =>
                 {
                     if (result)
-                        sc.IsOpen = false;
+                        sc.CloseCmd.Execute(null);
                     else
                         flag = false;
                 });

@@ -338,7 +338,7 @@ namespace Serial.Core
         public bool IsOpen
         {
             get => serialPort.IsOpen;
-            set
+            private set
             {
                 try
                 {
