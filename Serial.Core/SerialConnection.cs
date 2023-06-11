@@ -56,30 +56,33 @@ namespace Serial.Core
 
         private void SerialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-            if (PauseReceiving)
+            lock (serialPort)
             {
-                serialPort.DiscardInBuffer();
-                return;
-            }
-            try
-            {
-                Thread.Sleep(10); // 防止获取数据不完整
-
-                if (!serialPort.IsOpen)
-                    return;
-
-                byte[] data = new byte[serialPort.BytesToRead];
-                serialPort.Read(data, 0, data.Length);
-
-                ExecuteOnUIThread(() =>
+                if (PauseReceiving)
                 {
-                    AddSerialDataToList(new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault });
-                    UpdateReceivedCounter(data);
-                });
-            }
-            catch (Exception ex)
-            {
-                ProcessError(ex, OnReceivedDataError);
+                    serialPort.DiscardInBuffer();
+                    return;
+                }
+                try
+                {
+                    Thread.Sleep(10); // 防止获取数据不完整
+
+                    if (!serialPort.IsOpen)
+                        return;
+
+                    byte[] data = new byte[serialPort.BytesToRead];
+                    serialPort.Read(data, 0, data.Length);
+
+                    ExecuteOnUIThread(() =>
+                    {
+                        AddSerialDataToList(new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault });
+                        UpdateReceivedCounter(data);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    ProcessError(ex, OnReceivedDataError);
+                }
             }
         }
 
