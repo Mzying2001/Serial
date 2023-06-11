@@ -30,24 +30,14 @@ namespace Serial.MVVM
             Execute?.Invoke(parameter);
         }
 
-        public DelegateCommand(Action<object> execute) : this(execute, true)
-        {
-        }
-
-        public DelegateCommand(Action<object> execute, bool canExecute)
+        public DelegateCommand(Action<object> execute, bool canExecute = true)
         {
             Execute = execute;
             CanExecute = canExecute;
         }
 
-        public DelegateCommand(Action execute) : this(execute, true)
+        public DelegateCommand(Action execute, bool canExecute = true) : this(_ => execute?.Invoke(), canExecute)
         {
-        }
-
-        public DelegateCommand(Action execute, bool canExecute)
-        {
-            Execute = _ => execute();
-            CanExecute = canExecute;
         }
     }
 }

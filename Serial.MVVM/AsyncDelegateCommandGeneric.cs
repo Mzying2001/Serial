@@ -9,14 +9,11 @@ namespace Serial.MVVM
 
         private async Task CallAsyncExecuteGeneric(object parameter)
         {
-            await Execute((T)parameter);
+            if (Execute != null)
+                await Execute((T)parameter);
         }
 
-        public AsyncDelegateCommand(Func<T, Task> execute) : this(execute, true)
-        {
-        }
-
-        public AsyncDelegateCommand(Func<T, Task> execute, bool canExecute) : base((Func<object, Task>)null, canExecute)
+        public AsyncDelegateCommand(Func<T, Task> execute, bool canExecute = true) : base((Func<object, Task>)null, canExecute)
         {
             Execute = execute;
             base.Execute = CallAsyncExecuteGeneric;

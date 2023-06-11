@@ -12,24 +12,15 @@ namespace Serial.MVVM
             await Execute(parameter);
         }
 
-        public AsyncDelegateCommand(Func<object, Task> execute) : this(execute, true)
-        {
-        }
-
-        public AsyncDelegateCommand(Func<object, Task> execute, bool canExecute) : base((Action<object>)null, canExecute)
+        public AsyncDelegateCommand(Func<object, Task> execute, bool canExecute = true) : base((Action<object>)null, canExecute)
         {
             Execute = execute;
             base.Execute = CallAsyncExecute;
         }
 
-        public AsyncDelegateCommand(Func<Task> execute) : this(execute, true)
+        public AsyncDelegateCommand(Func<Task> execute, bool canExecute = true)
+            : this(async _ => await (execute != null ? execute() : Task.Run(() => { })), canExecute)
         {
-        }
-
-        public AsyncDelegateCommand(Func<Task> execute, bool canExecute) : base((Action<object>)null, canExecute)
-        {
-            Execute = async _ => await execute();
-            base.Execute = CallAsyncExecute;
         }
     }
 }
