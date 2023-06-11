@@ -123,6 +123,16 @@ namespace Serial.Core
         }
 
         /// <summary>
+        /// 更新 <see cref="SentDataCount"/> 和 <see cref="SentDataByteCount"/>
+        /// </summary>
+        /// <param name="data">新发送的数据</param>
+        private void UpdateSentCounter(byte[] data)
+        {
+            SentDataCount++;
+            SentDataByteCount += (ulong)data.Length;
+        }
+
+        /// <summary>
         /// 将 <see cref="StrToSend"/> 转换为 <see cref="byte[]"/>
         /// </summary>
         /// <returns></returns>
@@ -185,6 +195,26 @@ namespace Serial.Core
         {
             get => selectedData;
             set => UpdateValue(ref selectedData, value);
+        }
+
+        private ulong sentDataCount = 0;
+        /// <summary>
+        /// 已发送的数据数
+        /// </summary>
+        public ulong SentDataCount
+        {
+            get => sentDataCount;
+            private set => UpdateValue(ref sentDataCount, value);
+        }
+
+        private ulong sentDataByteCount = 0;
+        /// <summary>
+        /// 已发送数据的字节数
+        /// </summary>
+        public ulong SentDataByteCount
+        {
+            get => sentDataByteCount;
+            private set => UpdateValue(ref sentDataByteCount, value);
         }
 
         private ulong receivedDataCount = 0;
@@ -399,6 +429,7 @@ namespace Serial.Core
             {
                 byte[] data = ConvertStrToSend();
                 await serialPort.BaseStream.WriteAsync(data, 0, data.Length);
+                UpdateSentCounter(data);
                 AddSerialDataToList(SerialData.CreateSentData(StrToSend));
             }
             catch (Exception e)
@@ -433,6 +464,7 @@ namespace Serial.Core
             {
                 byte[] data = await Task.Run(() => File.ReadAllBytes(FileToSend));
                 await serialPort.BaseStream.WriteAsync(data, 0, data.Length);
+                UpdateSentCounter(data);
                 AddSerialDataToList(SerialData.CreateSentData($"[文件] {FileToSend}"));
             }
             catch (Exception e)
@@ -485,6 +517,7 @@ namespace Serial.Core
                 try
                 {
                     await serialPort.BaseStream.WriteAsync(data, 0, data.Length);
+                    UpdateSentCounter(data);
                     AddSerialDataToList(SerialData.CreateSentData(StrToSend));
                     await Task.Delay(LoopSendingInterval, cancellationToken);
                 }
