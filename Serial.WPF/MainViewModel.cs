@@ -1,4 +1,5 @@
-﻿using Serial.MVVM;
+﻿using Serial.Core;
+using Serial.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,17 +10,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Serial
+namespace Serial.WPF
 {
-    public class ViewModel : NotificationObject
+    public class MainViewModel : NotificationObject
     {
-        public static ViewModel Instance { get; } = new ViewModel();
+        public static MainViewModel Instance { get; } = new MainViewModel();
 
 
         public DelegateCommand AddSerialConnectionCmd { get; }
         public DelegateCommand RemoveSerialConnectionCmd { get; }
         public DelegateCommand ExportSerialDataCmd { get; }
         public DelegateCommand UpdateAvaliablePortsCmd { get; }
+        public DelegateCommand SelectFileToSendCmd { get; }
 
 
         public List<EncodingInfo> EncodingInfoList { get; }
@@ -48,8 +50,16 @@ namespace Serial
         {
             var sc = new SerialConnection(EncodingInfoList.Where(i => i.GetEncoding() == Encoding.UTF8).FirstOrDefault()); //默认使用utf-8
             sc.SelectedSerialPortInfo = AvaliablePorts.FirstOrDefault();
+            sc.OnReceivedDataError += SerialErrorHandler;
+            sc.OnSendingDataError += SerialErrorHandler;
+            sc.OnSwitchingIsOpenError += SerialErrorHandler;
             SelectedSerialConnection = sc;
             SerialConnections.Add(sc);
+        }
+
+        private void SerialErrorHandler(object sender, ErrorEventArgs e)
+        {
+            SimpleDialogs.ShowErrorMsg(e.GetException().Message);
         }
 
         private void RemoveSerialConnection(SerialConnection sc)
@@ -60,10 +70,10 @@ namespace Serial
             bool flag = true;
             if (sc.IsOpen)
             {
-                Utility.Ask("该串口已打开，是否要关闭并移除？", result =>
+                SimpleDialogs.Ask("该串口已打开，是否要关闭并移除？", result =>
                 {
                     if (result)
-                        sc.IsOpen = false;
+                        DelegateCommand.ExecuteCommand(sc.CloseCmd);
                     else
                         flag = false;
                 });
@@ -81,9 +91,9 @@ namespace Serial
             }
         }
 
-        private void ExportSerialData(SerialData serialData)
+        private void ExportSerialData(Core.SerialData serialData)
         {
-            Utility.AskSaveFile("文本文档|*.txt|所有文件|*.*", (ok, fileName) =>
+            SimpleDialogs.AskSaveFile("文本文档|*.txt|所有文件|*.*", (ok, fileName) =>
             {
                 if (ok)
                 {
@@ -93,9 +103,18 @@ namespace Serial
                     }
                     catch (Exception e)
                     {
-                        Utility.ShowErrorMsg(e.Message);
+                        SimpleDialogs.ShowErrorMsg(e.Message);
                     }
                 }
+            });
+        }
+
+        private void SelectFileToSend(SerialConnection serialConnection)
+        {
+            SimpleDialogs.AskOpenFile("", (ok, fileName) =>
+            {
+                if (ok)
+                    serialConnection.FileToSend = fileName;
             });
         }
 
@@ -108,7 +127,7 @@ namespace Serial
         }
 
 
-        private ViewModel()
+        private MainViewModel()
         {
             SerialConnections = new ObservableCollection<SerialConnection>();
             SerialConnections.CollectionChanged += SerialConnectionsCollectionChanged;
@@ -119,13 +138,14 @@ namespace Serial
                                             19200 , 38400 , 57600 , 115200, 128000, 230400 , 256000 , 460800 ,
                                             500000, 512000, 600000, 750000, 921600, 1000000, 1500000, 2000000, };
             DataBitsList = new List<int> { 5, 6, 7, 8 };
-            ParityList = Utility.GetEnumList<Parity>();
-            StopBitsList = Utility.GetEnumList<StopBits>();
+            ParityList = Enum.GetValues<Parity>().ToList();
+            StopBitsList = Enum.GetValues<StopBits>().ToList();
 
             AddSerialConnectionCmd = new DelegateCommand(AddSerialConnection);
             RemoveSerialConnectionCmd = new DelegateCommand<SerialConnection>(RemoveSerialConnection, false);
-            ExportSerialDataCmd = new DelegateCommand<SerialData>(ExportSerialData);
+            ExportSerialDataCmd = new DelegateCommand<Core.SerialData>(ExportSerialData);
             UpdateAvaliablePortsCmd = new DelegateCommand(UpdateAvaliablePorts);
+            SelectFileToSendCmd = new DelegateCommand<SerialConnection>(SelectFileToSend);
 
             AddSerialConnection();
         }

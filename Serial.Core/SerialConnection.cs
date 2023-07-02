@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Serial
+namespace Serial.Core
 {
     public class SerialConnection : NotificationObject
     {
@@ -20,56 +20,83 @@ namespace Serial
         /// </summary>
         private CancellationTokenSource loopSendingCTS;
 
+        /// <summary>
+        /// 接收数据发生错误时触发该事件
+        /// </summary>
+        public event ErrorEventHandler OnReceivedDataError;
+
+        /// <summary>
+        /// 发送数据发送错误时触发该事件
+        /// </summary>
+        public event ErrorEventHandler OnSendingDataError;
+
+        /// <summary>
+        /// 打开或关闭串口失败是触发该事件
+        /// </summary>
+        public event ErrorEventHandler OnSwitchingIsOpenError;
+
         public SerialConnection(EncodingInfo encodingInfo)
         {
-            EncodingInfo = encodingInfo;
-
-            serialPort = new System.IO.Ports.SerialPort()
-            {
-                ReadTimeout = 4000,
-                WriteTimeout = 4000
-            };
+            serialPort = new System.IO.Ports.SerialPort() { ReadTimeout = 4000, WriteTimeout = 4000 };
             serialPort.DataReceived += SerialPort_DataReceived;
 
+            EncodingInfo = encodingInfo;
             DataList = new ObservableCollection<SerialData>();
 
             OpenCmd = new DelegateCommand(Open);
-            CloseCmd = new DelegateCommand(Close);
-            SendStringCmd = new DelegateCommand(SendString);
+            CloseCmd = new AsyncDelegateCommand(Close);
+            SendStringCmd = new AsyncDelegateCommand(SendString);
             ClearDataCmd = new DelegateCommand(ClearData);
-            SelectFileCmd = new DelegateCommand(SelectFile);
-            SendFileCmd = new DelegateCommand(SendFile);
+            SendFileCmd = new AsyncDelegateCommand(SendFile);
             RemoveDataItemCmd = new DelegateCommand<SerialData>(RemoveDataItem);
-            StartLoopSendCmd = new DelegateCommand(StartLoopSend);
-            StopLoopSendCmd = new DelegateCommand(StopLoopSend);
+            StartLoopSendCmd = new AsyncDelegateCommand(StartLoopSend);
+            StopLoopSendCmd = new AsyncDelegateCommand(StopLoopSend);
         }
 
         private void SerialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-            if (PauseReceiving)
+            lock (serialPort)
             {
-                serialPort.DiscardInBuffer();
-                return;
-            }
-            try
-            {
-                Thread.Sleep(10); // 防止获取数据不完整
-
-                if (!serialPort.IsOpen)
-                    return;
-
-                byte[] data = new byte[serialPort.BytesToRead];
-                serialPort.Read(data, 0, data.Length);
-
-                App.Current?.Dispatcher?.Invoke(() =>
+                if (PauseReceiving)
                 {
-                    AddSerialDataToList(new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault });
-                    UpdateReceivedCounter(data);
-                });
+                    serialPort.DiscardInBuffer();
+                    return;
+                }
+                try
+                {
+                    Thread.Sleep(10); // 防止获取数据不完整
+
+                    if (!serialPort.IsOpen)
+                        return;
+
+                    byte[] data = new byte[serialPort.BytesToRead];
+                    serialPort.Read(data, 0, data.Length);
+
+                    ExecuteOnUIThread(() =>
+                    {
+                        AddSerialDataToList(new SerialData(data, EncodingInfo.GetEncoding()) { Hex = showHexByDefault });
+                        UpdateReceivedCounter(data);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    ProcessError(ex, OnReceivedDataError);
+                }
             }
-            catch (Exception ex)
+        }
+
+        /// <summary>
+        /// 调用错误处理函数，若无处理函数则抛出错误
+        /// </summary>
+        private void ProcessError(Exception e, ErrorEventHandler handler)
+        {
+            if (handler == null)
             {
-                Utility.ShowErrorMsg(ex.ToString());
+                throw e;
+            }
+            else
+            {
+                handler(this, new ErrorEventArgs(e));
             }
         }
 
@@ -93,6 +120,16 @@ namespace Serial
         {
             ReceivedDataCount++;
             ReceivedDataByteCount += (ulong)data.Length;
+        }
+
+        /// <summary>
+        /// 更新 <see cref="SentDataCount"/> 和 <see cref="SentDataByteCount"/>
+        /// </summary>
+        /// <param name="data">新发送的数据</param>
+        private void UpdateSentCounter(byte[] data)
+        {
+            SentDataCount++;
+            SentDataByteCount += (ulong)data.Length;
         }
 
         /// <summary>
@@ -158,6 +195,26 @@ namespace Serial
         {
             get => selectedData;
             set => UpdateValue(ref selectedData, value);
+        }
+
+        private ulong sentDataCount = 0;
+        /// <summary>
+        /// 已发送的数据数
+        /// </summary>
+        public ulong SentDataCount
+        {
+            get => sentDataCount;
+            private set => UpdateValue(ref sentDataCount, value);
+        }
+
+        private ulong sentDataByteCount = 0;
+        /// <summary>
+        /// 已发送数据的字节数
+        /// </summary>
+        public ulong SentDataByteCount
+        {
+            get => sentDataByteCount;
+            private set => UpdateValue(ref sentDataByteCount, value);
         }
 
         private ulong receivedDataCount = 0;
@@ -311,7 +368,7 @@ namespace Serial
         public bool IsOpen
         {
             get => serialPort.IsOpen;
-            set
+            private set
             {
                 try
                 {
@@ -327,7 +384,7 @@ namespace Serial
                 }
                 catch (Exception e)
                 {
-                    Utility.ShowErrorMsg(e.Message);
+                    ProcessError(e, OnSwitchingIsOpenError);
                 }
                 RaisePropertyChanged();
             }
@@ -348,41 +405,37 @@ namespace Serial
         /// 关闭串口
         /// </summary>
         public DelegateCommand CloseCmd { get; }
-        private void Close()
+        private async Task Close()
         {
+            CloseCmd.CanExecute = false;
             if (LoopSending)
-                StopLoopSend();
+                await StopLoopSend();
             IsOpen = false;
+            CloseCmd.CanExecute = true;
         }
 
         /// <summary>
         /// 发送字符串
         /// </summary>
         public DelegateCommand SendStringCmd { get; }
-        private async void SendString()
+        private async Task SendString()
         {
             if (string.IsNullOrEmpty(StrToSend))
                 return;
 
-            SerialData serialData = null;
             SendStringCmd.CanExecute = false;
 
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    byte[] data = ConvertStrToSend();
-                    serialPort.Write(data, 0, data.Length);
-                    serialData = SerialData.CreateSentData(StrToSend);
-                }
-                catch (Exception e)
-                {
-                    App.Current.Dispatcher.Invoke(() => Utility.ShowErrorMsg(e.Message));
-                }
-            });
-
-            if (serialData != null)
-                AddSerialDataToList(serialData);
+                byte[] data = ConvertStrToSend();
+                await serialPort.BaseStream.WriteAsync(data, 0, data.Length);
+                UpdateSentCounter(data);
+                AddSerialDataToList(SerialData.CreateSentData(StrToSend));
+            }
+            catch (Exception e)
+            {
+                ProcessError(e, OnSendingDataError);
+            }
 
             SendStringCmd.CanExecute = true;
         }
@@ -397,50 +450,29 @@ namespace Serial
         }
 
         /// <summary>
-        /// 选择要发送的文件
-        /// </summary>
-        public DelegateCommand SelectFileCmd { get; }
-        private void SelectFile()
-        {
-            Utility.AskOpenFile("", (ok, fileName) =>
-            {
-                if (ok)
-                    FileToSend = fileName;
-            });
-        }
-
-        /// <summary>
         /// 发送文件
         /// </summary>
         public DelegateCommand SendFileCmd { get; }
-        private async void SendFile()
+        private async Task SendFile()
         {
             if (string.IsNullOrEmpty(FileToSend))
                 return;
 
-            SerialData serialData = null;
             SendFileCmd.CanExecute = false;
-            SelectFileCmd.CanExecute = false;
 
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    byte[] data = File.ReadAllBytes(FileToSend);
-                    serialPort.Write(data, 0, data.Length);
-                    serialData = SerialData.CreateSentData($"[文件] {FileToSend}");
-                }
-                catch (Exception e)
-                {
-                    App.Current.Dispatcher.Invoke(() => Utility.ShowErrorMsg(e.Message));
-                }
-            });
-
-            if (serialData != null)
-                AddSerialDataToList(serialData);
+                byte[] data = await Task.Run(() => File.ReadAllBytes(FileToSend));
+                await serialPort.BaseStream.WriteAsync(data, 0, data.Length);
+                UpdateSentCounter(data);
+                AddSerialDataToList(SerialData.CreateSentData($"[文件] {FileToSend}"));
+            }
+            catch (Exception e)
+            {
+                ProcessError(e, OnSendingDataError);
+            }
 
             SendFileCmd.CanExecute = true;
-            SelectFileCmd.CanExecute = true;
         }
 
         /// <summary>
@@ -456,7 +488,7 @@ namespace Serial
         /// 开始循环发送
         /// </summary>
         public DelegateCommand StartLoopSendCmd { get; }
-        private async void StartLoopSend()
+        private async Task StartLoopSend()
         {
             if (string.IsNullOrEmpty(StrToSend))
                 return;
@@ -468,7 +500,7 @@ namespace Serial
             }
             catch (Exception e)
             {
-                Utility.ShowErrorMsg(e.Message);
+                ProcessError(e, OnSendingDataError);
                 return;
             }
 
@@ -484,7 +516,8 @@ namespace Serial
             {
                 try
                 {
-                    serialPort.Write(data, 0, data.Length);
+                    await serialPort.BaseStream.WriteAsync(data, 0, data.Length);
+                    UpdateSentCounter(data);
                     AddSerialDataToList(SerialData.CreateSentData(StrToSend));
                     await Task.Delay(LoopSendingInterval, cancellationToken);
                 }
@@ -494,7 +527,7 @@ namespace Serial
                 }
                 catch (Exception e)
                 {
-                    Utility.ShowErrorMsg(e.Message);
+                    ProcessError(e, OnSendingDataError);
                     break;
                 }
             }
@@ -508,7 +541,7 @@ namespace Serial
         /// 停止循环发送
         /// </summary>
         public DelegateCommand StopLoopSendCmd { get; }
-        private async void StopLoopSend()
+        private async Task StopLoopSend()
         {
             if (loopSendingCTS == null || loopSendingCTS.IsCancellationRequested)
                 return;

@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
 using System.Windows.Controls;
 
-namespace Serial.ValidationRules
+namespace Serial.WPF.ValidationRules
 {
-    abstract class RuleBase<T> : ValidationRule
+    public abstract class RuleBase<T> : ValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Serial.MVVM
@@ -30,24 +31,26 @@ namespace Serial.MVVM
             Execute?.Invoke(parameter);
         }
 
-        public DelegateCommand(Action<object> execute) : this(execute, true)
-        {
-        }
-
-        public DelegateCommand(Action<object> execute, bool canExecute)
+        public DelegateCommand(Action<object> execute, bool canExecute = true)
         {
             Execute = execute;
             CanExecute = canExecute;
         }
 
-        public DelegateCommand(Action execute) : this(execute, true)
+        public DelegateCommand(Action execute, bool canExecute = true) : this(_ => execute?.Invoke(), canExecute)
         {
         }
 
-        public DelegateCommand(Action execute, bool canExecute)
+        public static void ExecuteCommand(DelegateCommand command, object parameter = null)
         {
-            Execute = _ => execute();
-            CanExecute = canExecute;
+            if (command.CanExecute)
+                command.Execute?.Invoke(parameter);
+        }
+
+        public static async Task ExecuteCommandAsync(AsyncDelegateCommand command, object parameter = null)
+        {
+            if (command.CanExecute && command.Execute != null)
+                await command.Execute(parameter);
         }
     }
 }

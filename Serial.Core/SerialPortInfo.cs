@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Management;
 using System.Text.RegularExpressions;
 
-namespace Serial
+namespace Serial.Core
 {
     public class SerialPortInfo : IComparable<SerialPortInfo>
     {

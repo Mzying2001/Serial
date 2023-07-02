@@ -2,7 +2,7 @@
 using System;
 using System.Text;
 
-namespace Serial
+namespace Serial.Core
 {
     public class SerialData : NotificationObject
     {
