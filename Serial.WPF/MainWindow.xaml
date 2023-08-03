@@ -545,6 +545,7 @@
                                                                     MaxWidth="50"
                                                                     HorizontalContentAlignment="Center"
                                                                     VerticalContentAlignment="Center"
+                                                                    Background="Transparent"
                                                                     BorderThickness="0"
                                                                     Text="{Binding LoopSendingInterval, UpdateSourceTrigger=PropertyChanged}"
                                                                     ToolTip="循环发送的间隔时间，范围：1-100000ms" />
