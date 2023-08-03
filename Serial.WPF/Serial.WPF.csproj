@@ -9,6 +9,7 @@
     <FileVersion>1.0.4</FileVersion>
     <RepositoryUrl>https://github.com/Mzying2001/Serial</RepositoryUrl>
     <AssemblyName>Serial</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
